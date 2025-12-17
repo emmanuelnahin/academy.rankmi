@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Rankmi - Flujo de Reclutamiento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ===== ESTILOS PRINCIPALES ===== */
+        :root {
+            --primary: #DC2626;
+            --primary-light: #F87171;
+            --primary-bg: #FEF2F2;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --gray: #64748B;
+            --gray-light: #E2E8F0;
+            --gray-lighter: #F1F5F9;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --info: #3B82F6;
+            --info-light: #DBEAFE;
+            --border-radius: 8px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-primary: 0 4px 12px rgba(220, 38, 38, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: var(--dark);
+            padding: 12px;
+            max-width: 1200px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        /* ===== HEADER COMPACTO ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        /* ===== CONTROLES ===== */
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid var(--gray-light);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: var(--light);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-warning {
+            background: #F59E0B;
+            color: white;
+            border-color: #F59E0B;
+        }
+
+        .btn-warning:hover {
+            background: #D97706;
+            transform: translateY(-1px);
+        }
+
+        /* ===== INTERRUPTOR MODO OSCURO ===== */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 8px;
+        }
+
+        .toggle-text {
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gray);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        /* ===== FLUJO PRINCIPAL DESTACADO ===== */
+        .main-flow {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-primary);
+            border: 2px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flow-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .flow-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-title i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .flow-title-text {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .flow-subtitle {
+            font-size: 0.75rem;
+            color: var(--gray);
+            background: var(--primary-bg);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .flow-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 10px;
+            padding: 10px 0;
+        }
+
+        .flow-line {
+            position: absolute;
+            top: 28px;
+            left: 40px;
+            right: 40px;
+            height: 3px;
+            background: var(--gray-lighter);
+            z-index: 1;
+        }
+
+        .flow-progress {
+            position: absolute;
+            top: 28px;
+            left: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            z-index: 2;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 8px rgba(220, 38, 38, 0.3);
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 3;
+            width: 80px;
+            cursor: pointer;
+            padding: 8px 4px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .flow-step:hover {
+            background: var(--primary-bg);
+            transform: translateY(-2px);
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border: 2px solid var(--gray-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gray);
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .flow-step.active .step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
+        }
+
+        .flow-step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .step-status {
+            font-size: 0.65rem;
+            color: var(--gray);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        /* ===== INDICADOR DE TIEMPO ===== */
+        .step-time {
+            font-size: 0.65rem;
+            color: var(--success);
+            font-weight: 700;
+            margin-top: 3px;
+            padding: 2px 6px;
+            background: var(--success-light);
+            border-radius: 12px;
+            display: inline-block;
+            min-width: 50px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .flow-step.active .step-time {
+            background: var(--primary-bg);
+            color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        /* ===== FLUJO SECUNDARIO (MÓDULOS/CONEXIONES) - MÁS SUTIL ===== */
+        .modules-flow {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-light);
+        }
+
+        .modules-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .modules-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modules-title i {
+            color: var(--info);
+            font-size: 0.9rem;
+        }
+
+        .modules-title-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .modules-subtitle {
+            font-size: 0.7rem;
+            color: var(--gray);
+            background: var(--gray-lighter);
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .modules-track {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            padding: 15px 0;
+            min-height: 70px;
+        }
+
+        .modules-line {
+            position: absolute;
+            top: 50%;
+            left: 40px;
+            right: 40px;
+            height: 1px;
+            background: var(--gray-lighter);
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .modules-progress {
+            position: absolute;
+            top: 50%;
+            left: 40px;
+            height: 1px;
+            background: var(--info);
+            z-index: 2;
+            transform: translateY(-50%);
+            transition: width 0.4s ease;
+            opacity: 0.5;
+        }
+
+        .module-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+            min-width: 80px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .module-node:hover {
+            opacity: 1;
+        }
+
+        .module-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 6px;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            background: var(--gray);
+        }
+
+        .module-circle.completed {
+            background: var(--success);
+        }
+
+        .module-circle.active {
+            background: var(--info);
+            transform: scale(1.05);
+        }
+
+        .module-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.2;
+            color: var(--dark);
+        }
+
+        .module-status {
+            font-size: 0.65rem;
+            color: var(--gray);
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        /* ===== PANEL PRINCIPAL COMPACTO ===== */
+        .main-panel {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            min-height: 300px;
+        }
+
+        .panel-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        /* ===== CV UPLOAD ===== */
+        .upload-mini {
+            border: 2px dashed var(--gray-light);
+            border-radius: 6px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .upload-mini:hover {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .upload-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 0.85rem;
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .upload-subtext {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        /* ===== DATOS EXTRAÍDOS ===== */
+        .data-extracted {
+            background: var(--success-light);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            font-size: 0.8rem;
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .data-value {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* ===== MÓDULOS EN CHIPS ===== */
+        .modules-chips {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .module-chip {
+            background: var(--gray-lighter);
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            border-left: 2px solid var(--info);
+            cursor: help;
+            transition: all 0.2s ease;
+        }
+
+        .module-chip:hover {
+            background: var(--info-light);
+            transform: translateY(-1px);
+        }
+
+        .module-chip i {
+            color: var(--info);
+            font-size: 0.8rem;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* ===== DOCUMENTOS MINI ===== */
+        .documents-mini {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .doc-item {
+            background: var(--gray-lighter);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .doc-item:hover {
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .doc-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            margin: 0 auto 8px;
+        }
+
+        .doc-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .doc-status {
+            font-size: 0.65rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.7rem;
+            padding: 12px;
+            margin-top: 10px;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        /* ===== POPUP DE INFORMACIÓN DE ETAPAS ===== */
+        .info-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .info-popup {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-top: 4px solid var(--primary);
+            position: relative;
+            animation: slideUp 0.4s ease;
+            transform-origin: center;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px) scale(0.95); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-lighter);
+        }
+
+        .popup-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .popup-title i {
+            font-size: 1.2rem;
+        }
+
+        .popup-close {
+            background: var(--gray-lighter);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--gray);
+            transition: all 0.2s ease;
+        }
+
+        .popup-close:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .popup-content {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--dark);
+            padding: 10px 0;
+        }
+
+        .popup-content::before {
+            content: "💡";
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        /* Botón de información en cada etapa */
+        .step-info-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: var(--info);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: help;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 5;
+            border: none;
+            outline: none;
+        }
+
+        .flow-step:hover .step-info-btn {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .flow-step.active .step-info-btn {
+            opacity: 1;
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .step-info-btn:hover {
+            background: var(--info);
+            transform: scale(1.2) !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        /* ===== ESTILOS PARA MODO OSCURO ===== */
+        body.dark-mode {
+            background: #0F172A;
+            color: #E2E8F0;
+        }
+
+        body.dark-mode .header {
+            border-bottom-color: #334155;
+        }
+
+        body.dark-mode .main-flow,
+        body.dark-mode .modules-flow,
+        body.dark-mode .main-panel {
+            background: #1E293B;
+            border-color: #334155;
+            color: #E2E8F0;
+        }
+
+        body.dark-mode .btn:not(.btn-primary):not(.btn-warning) {
+            background: #334155;
+            border-color: #475569;
+            color: #E2E8F0;
+        }
+
+        body.dark-mode .flow-line {
+            background: #334155;
+        }
+
+        body.dark-mode .modules-line {
+            background: #334155;
+        }
+
+        body.dark-mode .section-title {
+            border-bottom-color: #334155;
+            color: #CBD5E1;
+        }
+
+        body.dark-mode .upload-mini {
+            border-color: #475569;
+            background: #334155;
+        }
+
+        body.dark-mode .upload-mini:hover {
+            background: #475569;
+        }
+
+        body.dark-mode .module-chip {
+            background: #334155;
+            border-left-color: #60A5FA;
+        }
+
+        body.dark-mode .doc-item {
+            background: #334155;
+        }
+
+        body.dark-mode .footer {
+            border-top-color: #334155;
+            color: #94A3B8;
+        }
+
+        body.dark-mode .step-time {
+            background: #064E3B;
+            color: #34D399;
+        }
+
+        body.dark-mode .step-circle {
+            background: #334155;
+            border-color: #475569;
+            color: #E2E8F0;
+        }
+
+        body.dark-mode .flow-step.active .step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        body.dark-mode .data-extracted {
+            background: #064E3B;
+            border-color: #047857;
+        }
+
+        body.dark-mode .toggle-text {
+            color: #CBD5E1;
+        }
+
+        body.dark-mode .info-popup {
+            background: #1E293B;
+            color: #E2E8F0;
+            border-color: var(--primary);
+        }
+
+        body.dark-mode .popup-header {
+            border-bottom-color: #334155;
+        }
+
+        body.dark-mode .popup-title {
+            color: var(--primary-light);
+        }
+
+        body.dark-mode .popup-close {
+            background: #334155;
+            color: #CBD5E1;
+        }
+
+        body.dark-mode .popup-close:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        body.dark-mode .module-circle {
+            background: #475569;
+        }
+
+        body.dark-mode .module-circle.completed {
+            background: var(--success);
+        }
+
+        body.dark-mode .module-circle.active {
+            background: var(--info);
+        }
+
+        /* ===== ANIMACIONES ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .main-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .modules-chips {
+                grid-template-columns: 1fr;
+            }
+            
+            .documents-mini {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-step {
+                width: 60px;
+            }
+            
+            .step-label {
+                font-size: 0.7rem;
+            }
+            
+            .module-node {
+                min-width: 70px;
+            }
+            
+            .module-label {
+                font-size: 0.65rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .toggle-container {
+                margin-left: 0;
+                margin-top: 8px;
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .flow-step {
+                width: 50px;
+                padding: 4px 2px;
+            }
+            
+            .step-circle {
+                width: 26px;
+                height: 26px;
+                font-size: 0.75rem;
+            }
+            
+            .step-label {
+                font-size: 0.65rem;
+            }
+            
+            .flow-line,
+            .flow-progress {
+                top: 20px;
+                left: 30px;
+                right: 30px;
+            }
+            
+            .module-node {
+                min-width: 60px;
+            }
+            
+            .module-circle {
+                width: 24px;
+                height: 24px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="logo-text">
+                <h1>ATS Rankmi</h1>
+                <p>Flujo de Reclutamiento Inteligente</p>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="pauseBtn">
+                <i class="fas fa-pause"></i>
+                <span class="btn-text">Pausar</span>
+            </button>
+            <button class="btn" id="resetBtn">
+                <i class="fas fa-redo"></i>
+                Reiniciar
+            </button>
+            <button class="btn btn-primary" id="simulateBtn">
+                <i class="fas fa-play"></i>
+                Simular CV
+            </button>
+            
+            <div class="toggle-container">
+                <span class="toggle-text">Modo Oscuro</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLUJO PRINCIPAL (INTERACTIVO - DESTACADO) -->
+    <div class="main-flow">
+        <div class="flow-header">
+            <div class="flow-title">
+                <i class="fas fa-stream"></i>
+                <span class="flow-title-text">Control de Etapas del Reclutamiento</span>
+            </div>
+            <div class="flow-subtitle">Haz clic en cualquier etapa para navegar</div>
+        </div>
+        
+        <div class="flow-timeline">
+            <div class="flow-line"></div>
+            <div class="flow-progress" id="mainFlowProgress"></div>
+            
+            <div class="flow-step active" data-step="1">
+                <button class="step-info-btn" data-stage="1">i</button>
+                <div class="step-circle">1</div>
+                <div class="step-label">Solicitud</div>
+                <div class="step-time" id="timeStep1">2-3 días</div>
+                <div class="step-status">Activo</div>
+            </div>
+            <div class="flow-step" data-step="2">
+                <button class="step-info-btn" data-stage="2">i</button>
+                <div class="step-circle">2</div>
+                <div class="step-label">Vacante</div>
+                <div class="step-time" id="timeStep2">1-2 días</div>
+                <div class="step-status">Pendiente</div>
+            </div>
+            <div class="flow-step" data-step="3">
+                <button class="step-info-btn" data-stage="3">i</button>
+                <div class="step-circle">3</div>
+                <div class="step-label">Búsqueda</div>
+                <div class="step-time" id="timeStep3">5-8 días</div>
+                <div class="step-status">Pendiente</div>
+            </div>
+            <div class="flow-step" data-step="4">
+                <button class="step-info-btn" data-stage="4">i</button>
+                <div class="step-circle">4</div>
+                <div class="step-label">Análisis</div>
+                <div class="step-time" id="timeStep4">3-5 días</div>
+                <div class="step-status">Pendiente</div>
+            </div>
+            <div class="flow-step" data-step="5">
+                <button class="step-info-btn" data-stage="5">i</button>
+                <div class="step-circle">5</div>
+                <div class="step-label">Selección</div>
+                <div class="step-time" id="timeStep5">8-11 días</div>
+                <div class="step-status">Pendiente</div>
+            </div>
+            <div class="flow-step" data-step="6">
+                <button class="step-info-btn" data-stage="6">i</button>
+                <div class="step-circle">6</div>
+                <div class="step-label">Contrato</div>
+                <div class="step-time" id="timeStep6">3-5 días</div>
+                <div class="step-status">Pendiente</div>
+            </div>
+            <div class="flow-step" data-step="7">
+                <button class="step-info-btn" data-stage="7">i</button>
+                <div class="step-circle">7</div>
+                <div class="step-label">Alta</div>
+                <div class="step-time" id="timeStep7">1-2 días</div>
+                <div class="step-status">Pendiente</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLUJO SECUNDARIO (MÓDULOS/CONEXIONES - SUTIL) -->
+    <div class="modules-flow">
+        <div class="modules-header">
+            <div class="modules-title">
+                <i class="fas fa-project-diagram"></i>
+                <span class="modules-title-text">Módulos y Conexiones Activas</span>
+            </div>
+            <div class="modules-subtitle">Visualización en tiempo real</div>
+        </div>
+        
+        <div class="modules-track" id="modulesTrack">
+            <!-- Módulos dinámicos se generarán aquí -->
+        </div>
+    </div>
+
+    <!-- PANEL PRINCIPAL -->
+    <div class="main-panel">
+        <!-- COLUMNA IZQUIERDA: CV PARSER -->
+        <div class="panel-section">
+            <div class="section-title">
+                <i class="fas fa-file-import"></i>
+                Subir CV para Análisis
+            </div>
+            
+            <div class="upload-mini" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">Arrastra tu CV aquí</div>
+                <div class="upload-subtext">PDF, DOC, DOCX - Hasta 5MB</div>
+            </div>
+            
+            <div class="section-title">
+                <i class="fas fa-list-check"></i>
+                Datos Extraídos Automáticamente
+            </div>
+            
+            <div class="data-extracted" id="dataExtracted" style="display: none;">
+                <div class="data-item">
+                    <span class="data-label">Nombre:</span>
+                    <span class="data-value">Juan Pérez Rodríguez</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Email:</span>
+                    <span class="data-value">juan.perez@email.com</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Experiencia:</span>
+                    <span class="data-value">5 años (Senior)</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Match con puesto:</span>
+                    <span class="data-value" style="color: var(--success); font-weight: 700;">85%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: MÓDULOS Y DOCUMENTOS -->
+        <div class="panel-section">
+            <div class="section-title">
+                <i class="fas fa-cubes"></i>
+                Módulos Activos en Esta Etapa
+            </div>
+            
+            <div class="modules-chips" id="modulesContainer">
+                <!-- Módulos dinámicos se generarán aquí -->
+            </div>
+            
+            <div class="section-title">
+                <i class="fas fa-folder"></i>
+                Documentos Generados
+            </div>
+            
+            <div class="documents-mini" id="documentsContainer">
+                <!-- Documentos dinámicos se generarán aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>Flujo automatizado de reclutamiento • Integración con Genius AI • Rankmi Full Suite</p>
+    </div>
+
+    <script>
+        // ===== CONFIGURACIÓN =====
+        const stages = {
+            1: {
+                name: "Solicitud",
+                modules: [
+                    { name: "Workflows", icon: "fas fa-gears", desc: "Aprobación de solicitud por jefatura" },
+                    { name: "Jerarquía", icon: "fas fa-sitemap", desc: "Define líneas de aprobación" },
+                    { name: "Centro Costos", icon: "fas fa-calculator", desc: "Valida presupuesto disponible" },
+                    { name: "Posiciones", icon: "fas fa-briefcase", desc: "Define requisitos del puesto" }
+                ],
+                connections: [
+                    { name: "Formulario", status: "completado" },
+                    { name: "Workflows", status: "activo" },
+                    { name: "Jerarquía", status: "pendiente" },
+                    { name: "Centro Costos", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Solicitud", icon: "fas fa-file-alt", status: "✓ Listo" },
+                    { name: "Presupuesto", icon: "fas fa-money-bill", status: "⏳ En revisión" }
+                ]
+            },
+            2: {
+                name: "Vacante",
+                modules: [
+                    { name: "ATS", icon: "fas fa-user-plus", desc: "Sistema central de selección" },
+                    { name: "Posiciones", icon: "fas fa-briefcase", desc: "Información del puesto" },
+                    { name: "Segmentos", icon: "fas fa-users", desc: "Define audiencia objetivo" }
+                ],
+                connections: [
+                    { name: "Workflows", status: "completado" },
+                    { name: "Jerarquía", status: "completado" },
+                    { name: "Centro Costos", status: "activo" },
+                    { name: "Posiciones", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Vacante", icon: "fas fa-bullhorn", status: "✓ Publicada" },
+                    { name: "Requisitos", icon: "fas fa-list-check", status: "✓ Definidos" }
+                ]
+            },
+            3: {
+                name: "Búsqueda",
+                modules: [
+                    { name: "ATS", icon: "fas fa-user-plus", desc: "Gestión de candidatos" },
+                    { name: "Genius AI", icon: "fas fa-magic", desc: "Pre-análisis de CVs" },
+                    { name: "Portal", icon: "fas fa-globe", desc: "Publicación externa" }
+                ],
+                connections: [
+                    { name: "Centro Costos", status: "completado" },
+                    { name: "Posiciones", status: "completado" },
+                    { name: "ATS", status: "activo" },
+                    { name: "Genius AI", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "CVs Recibidos", icon: "fas fa-file-pdf", status: "24 archivos" },
+                    { name: "Candidatos", icon: "fas fa-user-friends", status: "15 activos" }
+                ]
+            },
+            4: {
+                name: "Análisis",
+                modules: [
+                    { name: "Genius AI", icon: "fas fa-brain", desc: "Análisis inteligente de CV" },
+                    { name: "ATS", icon: "fas fa-user-plus", desc: "Gestión de candidatos" },
+                    { name: "SHL", icon: "fas fa-clipboard-check", desc: "Tests psicométricos" },
+                    { name: "Verificación", icon: "fas fa-user-shield", desc: "Antecedentes personales" }
+                ],
+                connections: [
+                    { name: "ATS", status: "completado" },
+                    { name: "Genius AI", status: "activo" },
+                    { name: "SHL Tests", status: "pendiente" },
+                    { name: "Verificación", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Análisis IA", icon: "fas fa-chart-line", status: "85% match" },
+                    { name: "Reporte", icon: "fas fa-file-chart-pie", status: "✓ Generado" }
+                ]
+            },
+            5: {
+                name: "Selección",
+                modules: [
+                    { name: "SHL", icon: "fas fa-clipboard-check", desc: "Evaluaciones psicométricas" },
+                    { name: "Verificación", icon: "fas fa-user-shield", desc: "Check de antecedentes" },
+                    { name: "Calendario", icon: "fas fa-calendar-alt", desc: "Agenda entrevistas" },
+                    { name: "Hub", icon: "fas fa-comments", desc: "Feedback del comité" }
+                ],
+                connections: [
+                    { name: "Genius AI", status: "completado" },
+                    { name: "SHL Tests", status: "activo" },
+                    { name: "Verificación", status: "pendiente" },
+                    { name: "Calendario", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Tests SHL", icon: "fas fa-chart-bar", status: "92% promedio" },
+                    { name: "Entrevistas", icon: "fas fa-calendar-check", status: "3 agendadas" }
+                ]
+            },
+            6: {
+                name: "Contrato",
+                modules: [
+                    { name: "Documentos", icon: "fas fa-file-contract", desc: "Generación de contrato" },
+                    { name: "Firma Digital", icon: "fas fa-signature", desc: "Firma electrónica" },
+                    { name: "Razón Social", icon: "fas fa-building", desc: "Entidad legal" },
+                    { name: "Nómina", icon: "fas fa-money-check", desc: "Configuración remuneración" }
+                ],
+                connections: [
+                    { name: "SHL Tests", status: "completado" },
+                    { name: "Verificación", status: "completado" },
+                    { name: "Documentos", status: "activo" },
+                    { name: "Firma Digital", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Contrato", icon: "fas fa-file-signature", status: "⏳ En firma" },
+                    { name: "Carta Oferta", icon: "fas fa-handshake", status: "✓ Aceptada" }
+                ]
+            },
+            7: {
+                name: "Alta",
+                modules: [
+                    { name: "Master Personas", icon: "fas fa-users", desc: "Creación de ficha" },
+                    { name: "Portal", icon: "fas fa-house-user", desc: "Acceso colaborador" },
+                    { name: "LMS", icon: "fas fa-graduation-cap", desc: "Cursos onboarding" },
+                    { name: "Nómina", icon: "fas fa-money-check-alt", desc: "Datos remunerativos" }
+                ],
+                connections: [
+                    { name: "Documentos", status: "completado" },
+                    { name: "Firma Digital", status: "completado" },
+                    { name: "Master Personas", status: "activo" },
+                    { name: "Onboarding", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Ficha Colaborador", icon: "fas fa-id-card", status: "✓ Creada" },
+                    { name: "Onboarding", icon: "fas fa-road", status: "⏳ En curso" }
+                ]
+            }
+        };
+
+        // ===== ELEMENTOS DOM =====
+        let currentStage = 1;
+        const totalStages = 7;
+        let animationInterval = null;
+
+        // ===== FUNCIONES PRINCIPALES =====
+        function setStage(stageNumber) {
+            currentStage = stageNumber;
+            const stageData = stages[stageNumber];
+            
+            // Actualizar timeline principal
+            updateMainTimeline(stageNumber);
+            
+            // Actualizar módulos secundarios
+            updateModulesFlow(stageData.connections);
+            
+            // Actualizar módulos en chips
+            updateModulesChips(stageData.modules);
+            
+            // Actualizar documentos
+            updateDocuments(stageData.documents);
+            
+            // Actualizar progreso
+            const progress = ((stageNumber - 1) / (totalStages - 1)) * 100;
+            document.getElementById('mainFlowProgress').style.width = `${progress}%`;
+            
+            // Actualizar tiempos estimados
+            updateTimeIndicators(stageNumber);
+        }
+
+        function updateMainTimeline(stageNumber) {
+            const steps = document.querySelectorAll('.flow-step');
+            steps.forEach(step => {
+                step.classList.remove('active');
+                const stepNum = parseInt(step.dataset.step);
+                if (stepNum < stageNumber) {
+                    step.classList.add('completed');
+                } else {
+                    step.classList.remove('completed');
+                }
+                
+                // Actualizar estado en texto
+                const statusEl = step.querySelector('.step-status');
+                if (stepNum === stageNumber) {
+                    statusEl.textContent = 'Activo';
+                } else if (stepNum < stageNumber) {
+                    statusEl.textContent = '✓ Completado';
+                } else {
+                    statusEl.textContent = 'Pendiente';
+                }
+            });
+            
+            const activeStep = document.querySelector(`.flow-step[data-step="${stageNumber}"]`);
+            activeStep.classList.add('active');
+        }
+
+        function updateModulesFlow(connections) {
+            const modulesTrack = document.getElementById('modulesTrack');
+            modulesTrack.innerHTML = `
+                <div class="modules-line"></div>
+                <div class="modules-progress" id="modulesProgress"></div>
+            `;
+            
+            // Crear nodos de módulos
+            connections.forEach((conn, index) => {
+                const node = document.createElement('div');
+                node.className = 'module-node';
+                
+                let statusClass = '';
+                let statusText = 'Pendiente';
+                
+                if (conn.status === 'completado') {
+                    statusClass = 'completed';
+                    statusText = '✓ Completado';
+                } else if (conn.status === 'activo') {
+                    statusClass = 'active';
+                    statusText = '⏳ Activo';
+                }
+                
+                node.innerHTML = `
+                    <div class="module-circle ${statusClass}">
+                        ${conn.status === 'completado' ? '<i class="fas fa-check"></i>' : (index + 1)}
+                    </div>
+                    <div class="module-label">${conn.name}</div>
+                    <div class="module-status">${statusText}</div>
+                `;
+                
+                modulesTrack.appendChild(node);
+            });
+            
+            // Actualizar progreso de módulos
+            setTimeout(() => {
+                const completedCount = connections.filter(c => c.status === 'completado').length;
+                const totalCount = connections.length;
+                const progress = (completedCount / totalCount) * 100;
+                document.getElementById('modulesProgress').style.width = `${progress}%`;
+            }, 100);
+        }
+
+        function updateModulesChips(modules) {
+            const modulesContainer = document.getElementById('modulesContainer');
+            modulesContainer.innerHTML = '';
+            
+            modules.forEach(module => {
+                const chip = document.createElement('div');
+                chip.className = 'module-chip';
+                chip.title = module.desc;
+                chip.innerHTML = `
+                    <i class="${module.icon}"></i>
+                    <span>${module.name}</span>
+                `;
+                modulesContainer.appendChild(chip);
+            });
+        }
+
+        function updateDocuments(documents) {
+            const documentsContainer = document.getElementById('documentsContainer');
+            documentsContainer.innerHTML = '';
+            
+            documents.forEach(doc => {
+                const item = document.createElement('div');
+                item.className = 'doc-item';
+                item.innerHTML = `
+                    <div class="doc-icon">
+                        <i class="${doc.icon}"></i>
+                    </div>
+                    <div class="doc-name">${doc.name}</div>
+                    <div class="doc-status">${doc.status}</div>
+                `;
+                documentsContainer.appendChild(item);
+            });
+        }
+
+        function simulateCVUpload() {
+            // Ocultar área de upload
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.style.display = 'none';
+            
+            // Mostrar datos extraídos
+            const dataExtracted = document.getElementById('dataExtracted');
+            setTimeout(() => {
+                dataExtracted.style.display = 'block';
+                dataExtracted.classList.add('fade-in');
+                
+                // Avanzar a etapa 4 (Análisis CV)
+                setTimeout(() => {
+                    setStage(4);
+                    
+                    // Iniciar animación automática
+                    startAutoAdvance();
+                }, 1000);
+            }, 800);
+        }
+
+        function startAutoAdvance() {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+            
+            animationInterval = setInterval(() => {
+                if (currentStage < totalStages) {
+                    setStage(currentStage + 1);
+                } else {
+                    clearInterval(animationInterval);
+                    // Regresar al inicio después de 3 segundos
+                    setTimeout(() => {
+                        setStage(1);
+                        startAutoAdvance();
+                    }, 3000);
+                }
+            }, 3000);
+        }
+
+        function stopAutoAdvance() {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+        }
+
+        function resetFlow() {
+            stopAutoAdvance();
+            
+            // Mostrar área de upload
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.style.display = 'flex';
+            
+            // Ocultar datos extraídos
+            const dataExtracted = document.getElementById('dataExtracted');
+            dataExtracted.style.display = 'none';
+            
+            // Regresar a etapa 1
+            setStage(1);
+            
+            // Resetear estado de pausa
+            isPaused = false;
+            elapsedPausedTime = 0;
+            pauseStartTime = null;
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i><span class="btn-text"> Pausar</span>';
+            pauseBtn.classList.remove('btn-warning');
+            updateTimeIndicators(1);
+        }
+
+        // ===== NUEVAS FUNCIONALIDADES =====
+
+        // 1. BOTÓN DE PAUSAR/REANUDAR
+        const pauseBtn = document.getElementById('pauseBtn');
+        let isPaused = false;
+        let pauseStartTime = null;
+        let elapsedPausedTime = 0;
+
+        pauseBtn.addEventListener('click', function() {
+            if (!isPaused) {
+                // Pausar
+                stopAutoAdvance();
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i><span class="btn-text"> Reanudar</span>';
+                pauseBtn.classList.add('btn-warning');
+                pauseStartTime = Date.now();
+                isPaused = true;
+                
+                // Mostrar notificación
+                showNotification('Simulación pausada', 'info');
+            } else {
+                // Reanudar
+                if (pauseStartTime) {
+                    elapsedPausedTime += Date.now() - pauseStartTime;
+                }
+                startAutoAdvance();
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i><span class="btn-text"> Pausar</span>';
+                pauseBtn.classList.remove('btn-warning');
+                isPaused = false;
+                
+                // Mostrar notificación
+                showNotification('Simulación reanudada', 'success');
+            }
+        });
+
+        // 2. MODO OSCURO
+        const darkModeToggle = document.getElementById('darkModeToggle');
+
+        // Verificar preferencia guardada
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.checked = true;
+        }
+
+        darkModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'enabled');
+                showNotification('Modo oscuro activado', 'info');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'disabled');
+                showNotification('Modo claro activado', 'info');
+            }
+        });
+
+        // 3. TIEMPOS ESTIMADOS REALISTAS (50% más que la propuesta original)
+        const stageTimes = {
+            1: { min: 2, max: 3, unit: 'días' },    // Solicitud
+            2: { min: 1, max: 2, unit: 'días' },     // Vacante
+            3: { min: 5, max: 8, unit: 'días' },     // Búsqueda
+            4: { min: 3, max: 5, unit: 'días' },     // Análisis
+            5: { min: 8, max: 11, unit: 'días' },    // Selección
+            6: { min: 3, max: 5, unit: 'días' },     // Contrato
+            7: { min: 1, max: 2, unit: 'días' }      // Alta
+        };
+
+        // Función para actualizar tiempos dinámicamente
+        function updateTimeIndicators(currentStage) {
+            for (let i = 1; i <= 7; i++) {
+                const timeElement = document.getElementById(`timeStep${i}`);
+                if (timeElement) {
+                    const time = stageTimes[i];
+                    let timeText = '';
+                    
+                    if (time.min === time.max) {
+                        timeText = `${time.min} ${time.unit}`;
+                    } else {
+                        timeText = `${time.min}-${time.max} ${time.unit}`;
+                    }
+                    
+                    // Si es la etapa actual, mostrar tiempo restante estimado
+                    if (i === currentStage) {
+                        const avgTime = (time.min + time.max) / 2;
+                        timeElement.innerHTML = `<i class="fas fa-clock"></i> ${timeText}`;
+                        timeElement.style.fontWeight = '700';
+                    } else if (i < currentStage) {
+                        // Etapas completadas
+                        timeElement.innerHTML = `<i class="fas fa-check-circle"></i> Completado`;
+                        timeElement.style.color = 'var(--success)';
+                        timeElement.style.background = 'var(--success-light)';
+                    } else {
+                        // Etapas futuras
+                        timeElement.textContent = timeText;
+                        timeElement.style.color = 'var(--gray)';
+                        timeElement.style.background = 'var(--gray-lighter)';
+                    }
+                }
+            }
+        }
+
+        // 4. NOTIFICACIONES TEMPORALES
+        function showNotification(message, type = 'info') {
+            // Eliminar notificación anterior si existe
+            const existingNotif = document.querySelector('.notification');
+            if (existingNotif) existingNotif.remove();
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            // Estilos inline para la notificación
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10B981' : '#3B82F6'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-eliminar después de 3 segundos
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // 5. POPUP DE INFORMACIÓN DE ETAPAS
+        const stageDescriptions = {
+            1: "El líder identifica una 'silla vacía' en su organigrama y solicita la vacante con un solo clic este pasa a etapas de aprobaciones. Sin formularios manuales, el sistema ya conoce el cargo y los requisitos a detalle.",
+            2: "La vacante se crea y publica automáticamente heredando los datos del presupuesto aprobado y la requisición. Se conecta directamente con el organigrama para asegurar la trazabilidad del área y solicitante.",
+            3: "El ATS trabaja de forma autónoma para atraer talento. Se inicia la difusión en portales y la recepción de candidatos eliminando la burocracia inicial.",
+            4: "Filtro inteligente de candidatos. Aquí Genius AI analiza los perfiles para asegurar que coincidan con la renta y requisitos precargados en una plantilla.",
+            5: "Gestión de entrevistas y evaluaciones psicométricas integradas, como también la comunicación con el candidato y automatización de mensajes en avance de etapas o descalificación en el proceso. Los líderes pueden dar feedback inmediato dentro de la plataforma.",
+            6: "Generación y firma de Carta Oferta Digital. En el instante que el candidato firma, el contrato se archiva automáticamente en Gestión Documental.",
+            7: "Magia de cierre automático. Se crea el acceso a la plataforma y la Ficha Maestra del colaborador con datos de renta y cargo ya precargados."
+        };
+
+        // Crear popup HTML
+        const popupHTML = `
+            <div class="info-popup-overlay" id="stageInfoPopup">
+                <div class="info-popup">
+                    <div class="popup-header">
+                        <div class="popup-title">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="popupStageTitle">Etapa 1 - Solicitud</span>
+                        </div>
+                        <button class="popup-close" id="closePopup">&times;</button>
+                    </div>
+                    <div class="popup-content" id="popupStageDescription">
+                        Cargando información...
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Insertar popup en el body
+        document.body.insertAdjacentHTML('beforeend', popupHTML);
+
+        // Referencias a elementos del popup
+        const popupOverlay = document.getElementById('stageInfoPopup');
+        const popupTitle = document.getElementById('popupStageTitle');
+        const popupDescription = document.getElementById('popupStageDescription');
+        const closePopupBtn = document.getElementById('closePopup');
+
+        // Función para mostrar información de etapa
+        function showStageInfo(stageNumber) {
+            const stageName = stages[stageNumber].name;
+            const description = stageDescriptions[stageNumber];
+            
+            popupTitle.textContent = `Etapa ${stageNumber} - ${stageName}`;
+            popupDescription.textContent = description;
+            
+            popupOverlay.style.display = 'flex';
+            
+            // Pausar animación automática si está activa
+            stopAutoAdvance();
+        }
+
+        // Función para cerrar popup
+        function closeStageInfo() {
+            popupOverlay.style.display = 'none';
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar con etapa 1
+            setStage(1);
+            
+            // Timeline principal clicks
+            const steps = document.querySelectorAll('.flow-step');
+            steps.forEach(step => {
+                step.addEventListener('click', () => {
+                    const stepNumber = parseInt(step.dataset.step);
+                    stopAutoAdvance();
+                    setStage(stepNumber);
+                });
+            });
+            
+            // Botones de control
+            document.getElementById('uploadArea').addEventListener('click', simulateCVUpload);
+            document.getElementById('simulateBtn').addEventListener('click', simulateCVUpload);
+            document.getElementById('resetBtn').addEventListener('click', resetFlow);
+            
+            // Añadir event listeners a todos los botones de información
+            const infoButtons = document.querySelectorAll('.step-info-btn');
+            infoButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Evitar que active el click de la etapa
+                    const stageNumber = parseInt(button.dataset.stage);
+                    showStageInfo(stageNumber);
+                });
+            });
+            
+            // Cerrar popup al hacer clic en la X
+            closePopupBtn.addEventListener('click', closeStageInfo);
+            
+            // Cerrar popup al hacer clic fuera del contenido
+            popupOverlay.addEventListener('click', (e) => {
+                if (e.target === popupOverlay) {
+                    closeStageInfo();
+                }
+            });
+            
+            // Cerrar popup con tecla ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && popupOverlay.style.display === 'flex') {
+                    closeStageInfo();
+                }
+            });
+            
+            // Drag and drop para CV
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary)';
+                uploadArea.style.background = 'var(--primary-bg)';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = 'var(--gray-light)';
+                uploadArea.style.background = 'transparent';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--gray-light)';
+                uploadArea.style.background = 'transparent';
+                simulateCVUpload();
+            });
+        });
+    </script>
+</body>
+</html>
