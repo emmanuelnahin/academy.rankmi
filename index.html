@@ -3,2135 +3,1192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Emmanuel David Nahin López"> 
-    <title>Resumen Mapa Rankmi (Final Flow Logic)</title>
+    <title>ATS Rankmi - Flujo de Reclutamiento</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-      
+    
     <style>
-        /* =========================================================================
-           ESTILOS BASE
-           ========================================================================= */
+        /* ===== ESTILOS PRINCIPALES ===== */
         :root {
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --col-int: #475569; --col-admin: #0ea5e9; --col-core: #e11d48; 
-            --col-tal: #f59e0b; --col-exp: #10b981; 
-            --col-extra: #6366f1;
+            --primary: #DC2626;
+            --primary-light: #F87171;
+            --primary-bg: #FEF2F2;
+            --dark: #0F172A;
+            --light: #F8FAFC;
+            --gray: #64748B;
+            --gray-light: #E2E8F0;
+            --gray-lighter: #F1F5F9;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --info: #3B82F6;
+            --info-light: #DBEAFE;
+            --border-radius: 8px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-primary: 0 4px 12px rgba(220, 38, 38, 0.1);
         }
 
-        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            margin: 0; padding: 0; background-color: var(--bg-color); font-family: 'Inter', sans-serif;
-            min-height: 100vh; width: 100%; overflow: hidden; display: flex; flex-direction: column;
-            font-size: 14px; user-select: none; transition: background-color 0.6s ease, color 0.6s ease;
-        }
-
-        /* HEADER */
-        header {
-            height: 56px; padding: 0 20px; 
-            background: rgba(255,255,255,0.9);
-            border-bottom: 1px solid #e2e8f0;
-            display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; 
-            position: sticky; top: 0; z-index: 100001; 
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-        }
-        
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        h1 { 
-            font-size: 0.95rem; font-weight: 800; color: #dc2626;
-            text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin: 0;
-            letter-spacing: 0.5px;
-        }
-        h1 span { color: #dc2626; }
-
-        /* CONTROLES */
-        .controls { display: flex; gap: 0; align-items: center; height: 100%; }
-        
-        .control-group {
-            display: flex; align-items: center; gap: 8px; padding: 0 12px;
-            border-right: 1px solid #cbd5e1; height: 32px;
-        }
-        .control-group:last-child { border-right: none; padding-right: 0; }
-        .control-group:first-child { padding-left: 0; }
-
-        .select-feature {
-            height: 32px; border-radius: 4px; border: 1px solid #cbd5e1;
-            font-size: 0.75rem; color: #475569; background: #fff; padding: 0 8px;
-            cursor: pointer; outline: none; transition: 0.2s;
-        }
-        .select-feature:hover { border-color: #94a3b8; }
-        .select-feature:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
-
-        .search-box { position: relative; }
-        .search-box input {
-            height: 32px; padding: 0 10px 0 30px; border-radius: 4px; border: 1px solid #cbd5e1;
-            font-size: 0.75rem; width: 140px; transition: all 0.2s; background: white; color: #334155;
-        }
-        .search-box input:focus { outline: none; border-color: #3b82f6; width: 180px; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
-        .search-box i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.75rem;}
-
-        .btn-base {
-            height: 32px; min-width: 32px; padding: 0 8px;
-            border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer;
-            font-weight: 600; font-size: 0.8rem; 
-            display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;
-            background: white; color: #475569;
-        }
-        .btn-base:hover { background: #f8fafc; border-color: #94a3b8; color: #1e293b; }
-        
-        #btn-reset { color: #dc2626; border-color: #fecaca; background: #fef2f2; }
-        #btn-reset:hover { background: #fee2e2; }
-
-        .btn-base.active { background-color: #fef3c7 !important; color: #d97706 !important; border-color: #f59e0b !important; }
-
-        .tour-capsule {
-            display: flex; align-items: center; gap: 0;
-            border: 1px solid #10b981; border-radius: 4px; 
-            height: 32px;
-            overflow: visible !important; 
-            width: auto !important;        
-            padding-left: 8px;            
-            background: #ecfdf5;
-        }
-        
-        .tour-btn {
-            border: none; background: #10b981; color: white; height: 100%; width: 32px; 
-            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;
-            border-top-right-radius: 3px; border-bottom-right-radius: 3px;
-            margin-left: 5px;
-        }
-        .tour-btn:hover { background: #059669; }
-        .tour-btn.playing { background: #ef4444; }
-
-        .btn-clock { 
-            font-family: 'Inter', monospace; font-size: 0.50rem; font-weight: 600; letter-spacing: 0;
-            background: #fff; color: #334155; padding: 0 7px; cursor: default; min-width: auto;
-        }
-
-        /* =========================================================================
-           AJUSTES DE ESPACIADO Y LAYOUT
-           ========================================================================= */
-        .badge { font-size: 0.6rem; background: rgba(241, 245, 249, 0.8); color: #475569; padding: 3px 8px; border-radius: 12px; font-weight: 600; border: 1px solid #e2e8f0; cursor: help;}
-
-        #connector-layer-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        #connector-layer-fg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
-        #label-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
-
-        .main-layout {
-            flex: 1; display: flex; flex-direction: column; justify-content: flex-start;
-            padding: 20px 15px 15px 15px; 
-            position: relative; z-index: 5;
-            max-width: 1800px; width: 100%; margin: 0 auto; box-sizing: border-box;
-            overflow-y: auto; animation: fadeIn 0.8s ease-out;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .cross-nodes { display: flex; gap: 15px; margin-bottom: 5px; width: 100%; justify-content: center; }
-        
-        .genius-card, .analytics-card {
-            flex: 1; 
-            max-width: 320px; 
-            justify-content: center; 
-            padding: 8px 24px;
-            font-size: 0.85rem; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-            font-weight: 700;
-            border-radius: 8px; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px;
-            background: white; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            position: relative; 
-            z-index: 10;
-            min-height: 34px;
-            border-width: 1px; border-style: solid;
-        }
-        .genius-card { border-color: #fdba74 !important; border-left: 4px solid #f97316 !important; color: #c2410c;}
-        .analytics-card { border-color: #c4b5fd !important; border-left: 4px solid #7c3aed !important; color: #6d28d9;}
-
-        .columns-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; width: 100%; align-items: start; }
-        @media (max-width: 1024px) { .columns-container { min-width: 900px; } }
-        
-        .column { 
-            display: flex; flex-direction: column; gap: 4px; padding: 6px;
-            background: rgba(255,255,255,0.85); border-radius: 12px; border: 1px dashed #cbd5e1; 
-            position: relative; z-index: 5; transition: transform 0.3s, background-color 0.3s, border-color 0.3s;
-        }
-        .column:hover { border-color: #94a3b8; }
-
-        .col-title { 
-            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;
-            color: var(--text-muted); font-weight: 800; text-align: center; 
-            border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 5px;
-            position: relative; cursor: help;
-        }
-        
-        [data-tooltip]:hover::after {
-            content: attr(data-tooltip); position: absolute; left: 50%; transform: translateX(-50%);
-            background: #1e293b; color: #f8fafc; padding: 8px 12px; border-radius: 6px;
-            font-size: 0.75rem; width: 200px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            z-index: 9999; text-transform: none; font-weight: 500; line-height: 1.4; pointer-events: none;
-            text-align: center;
-        }
-        [data-tooltip]:hover::before {
-            content: ''; position: absolute; left: 50%; transform: translateX(-50%); 
-            border: 6px solid transparent; z-index: 9999;
-        }
-
-        .col-title[data-tooltip]:hover::after { top: 100%; margin-top: 8px; }
-        .col-title[data-tooltip]:hover::before { top: 100%; border-bottom-color: #1e293b; margin-top: -4px; }
-        .card[data-tooltip]:hover::after { bottom: 100%; margin-bottom: 8px; }
-        .card[data-tooltip]:hover::before { bottom: 100%; border-top-color: #1e293b; margin-bottom: -4px; }
-        .cross-nodes .card[data-tooltip]:hover::after { top: 100%; bottom: auto; margin-top: 8px; margin-bottom: 0; }
-        .cross-nodes .card[data-tooltip]:hover::before { 
-            top: 100%; bottom: auto; margin-top: -4px; margin-bottom: 0;
-            border-top-color: transparent; border-bottom-color: #1e293b;
-        }
-
-        .c-int .col-title { color: var(--col-int); }
-        .c-admin .col-title { color: var(--col-admin); }
-        .c-core .col-title { color: var(--col-core); }
-        .c-tal .col-title { color: var(--col-tal); }
-        .c-exp .col-title { color: var(--col-exp); }
-
-        .card {
-            background: var(--card-bg); padding: 3px 8px; border-radius: 6px;
-            border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            cursor: grab; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s, opacity 0.3s, background-color 0.3s, border-color 0.3s;
-            display: flex; align-items: center; gap: 8px; min-height: 26px;
-            position: relative; z-index: 10;
-        }
-        .card:active { cursor: grabbing; }
-
-        .card.highlight { 
-            z-index: 200 !important; background: white;
-            box-shadow: 0 15px 40px -5px rgba(0,0,0,0.3), 0 0 0 2px #3b82f6; border-color: #3b82f6;
-        }
-        
-        @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-        .card.search-match { animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
-        .card.is-dragging { transition: none !important; transform: scale(1.1); z-index: 200 !important; }
-        
-        .card.is-fixed {
-            transform: scale(1.2) translateY(-10px) !important; 
-            z-index: 9999 !important; background-color: #ffffff !important;
-            border-color: #3b82f6 !important; border-width: 2px !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 0 0 6px rgba(59, 130, 246, 0.2) !important;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        }
-
-        .card i { font-size: 0.85rem; width: 18px; text-align: center; color: #94a3b8; transition: color 0.2s; display: inline-block;}
-        .c-int .card i { color: var(--col-int); opacity: 0.7; }
-        .c-admin .card i { color: var(--col-admin); opacity: 0.7; }
-        .c-core .card i { color: var(--col-core); opacity: 0.7; }
-        .c-tal .card i { color: var(--col-tal); opacity: 0.7; }
-        .c-exp .card i { color: var(--col-exp); opacity: 0.7; }
-        .card:hover i, .card.highlight i { opacity: 1; transform: scale(1.1); }
-        .card-name { font-weight: 600; font-size: 0.75rem; color: var(--text-main); line-height: 1.1; position: relative; z-index: 2;}
-
-        .c-int .card { border-left: 3px solid var(--col-int); }
-        .c-admin .card { border-left: 3px solid var(--col-admin); }
-        .c-core .card { border-left: 3px solid var(--col-core); }
-        .c-tal .card { border-left: 3px solid var(--col-tal); }
-        .c-exp .card { border-left: 3px solid var(--col-exp); }
-
-        #connector-layer-bg path { fill: none; stroke: #94a3b8; stroke-width: 1.5px; opacity: 0.35; transition: opacity 0.3s, stroke 0.3s; }
-        #connector-layer-fg path {
-            fill: none; stroke: #3b82f6; stroke-width: 1.5px; opacity: 0; transition: opacity 0.2s;
-            stroke-dasharray: 8 4; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-        }
-        #connector-layer-fg path.active { opacity: 1; marker-end: url(#arrow); animation: flow 0.8s linear infinite; }
-        @keyframes flow { from { stroke-dashoffset: 12; } to { stroke-dashoffset: 0; } }
-
-        #connector-layer-fg path.sync.active { stroke: #ef4444; marker-end: url(#arrow-red); }
-        #connector-layer-fg path.ai.active { stroke: #f97316; marker-end: url(#arrow-orange); }
-
-        /* SEGMENTACIÓN */
-        #connector-layer-fg path.seg.active { 
-            stroke: #10b981; 
-            marker-end: url(#arrow-green); 
-            stroke-dasharray: 4 2; 
-        }
-
-        /* --- BIDIRECCIONALIDAD (REMUNERACIONES) --- */
-        #connector-layer-fg path.bidirectional {
-            marker-start: url(#arrow); /* Añade flecha al inicio */
-            marker-end: url(#arrow);    /* Añade flecha al final */
-        }
-        #connector-layer-fg path.bidirectional.sync {
-            marker-start: url(#arrow-red);
-            marker-end: url(#arrow-red);
-        }
-
-        body.mode-dimmed #connector-layer-bg path { opacity: 0.05; }
-        body.mode-dimmed .card { opacity: 0.3; filter: grayscale(100%); transform: scale(0.98); }
-        body.mode-dimmed .card.highlight { opacity: 1; filter: none; }
-
-        /* =================================================================
-           ETIQUETAS COMPACTAS (Estilo solicitado)
-           ================================================================= */
-        .line-label {
-            position: absolute; background: #0f172a; color: white; 
-            padding: 2px 6px; 
-            border-radius: 4px;
-            font-size: 0.6rem; 
-            pointer-events: none; opacity: 0; z-index: 201; 
-            transform: translate(-50%, -50%) scale(0.8); transition: all 0.2s;
-            white-space: nowrap; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .line-label.src-tech { background-color: #0f172a; border-color: #334155; } /* Backend / Oficial */
-        .line-label.src-user { background-color: #7c3aed; border-color: #8b5cf6; } /* Usuario / Lógica Visual */
-
-        .line-label.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-        .legend {
-            position: fixed; bottom: 10px; right: 10px; background: white; padding: 5px 10px;
-            border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; z-index: 2000; font-size: 0.65rem; 
-            display: flex; flex-direction: column; gap: 3px; transition: background 0.3s, border 0.3s, color 0.3s;
-        }
-        .legend-title { font-weight: 700; color: #64748b; margin-bottom: 2px; text-transform: uppercase; font-size: 0.6rem;}
-        .legend-item { display: flex; align-items: center; gap: 6px; color: #334155; }
-        .legend-line { width: 18px; height: 3px; border-radius: 2px; }
-        .l-blue { background: repeating-linear-gradient(to right, #3b82f6 0, #3b82f6 5px, transparent 5px, transparent 8px); }
-        .l-red { background: repeating-linear-gradient(to right, #ef4444 0, #ef4444 5px, transparent 5px, transparent 8px); }
-        .l-orange { background: repeating-linear-gradient(to right, #f97316 0, #f97316 5px, transparent 5px, transparent 8px); }
-        .l-green { background: repeating-linear-gradient(to right, #10b981 0, #10b981 5px, transparent 5px, transparent 8px); }
-        
-        .dot-leg { width: 8px; height: 8px; border-radius: 50%; }
-        .dot-tech { background: #0f172a; }
-        .dot-user { background: #7c3aed; }
-
-        /* OTOÑO */
-        body.mode-autumn { background-color: #ffedd5 !important; color: #431407; }
-        body.mode-autumn h1 { color: #9a3412; }
-        body.mode-autumn .search-box input { background: #fffaf0; color: #7c2d12; border-color: #f97316; box-shadow: 0 1px 2px rgba(124, 45, 18, 0.1); }
-        body.mode-autumn .search-box input:focus { border-color: #ea580c; background: #fff; box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.25); }
-        body.mode-autumn .btn-base { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
-        body.mode-autumn .btn-base:hover { background: #fed7aa; }
-        body.mode-autumn .column { background: rgba(255, 247, 237, 0.9); border-color: #fdba74; box-shadow: 0 4px 6px -1px rgba(124, 45, 18, 0.1); }
-        body.mode-autumn .col-title { color: #c2410c; border-bottom-color: #f97316; font-weight: 900; }
-        body.mode-autumn .c-int .col-title { color: #a16207; }  
-        body.mode-autumn .c-admin .col-title { color: #ea580c; }  
-        body.mode-autumn .c-core .col-title { color: #be123c; } 
-        body.mode-autumn .c-tal .col-title { color: #b45309; } 
-        body.mode-autumn .c-exp .col-title { color: #15803d; } 
-        body.mode-autumn .card { background-color: #fff; border-color: #fdba74; color: #431407; box-shadow: 0 2px 4px rgba(67, 20, 7, 0.1); }
-        body.mode-autumn .card-name { color: #431407; }
-        body.mode-autumn .card.is-fixed { background-color: #fff7ed !important; border-color: #ea580c !important; color: #7c2d12 !important; box-shadow: 0 25px 50px -12px rgba(124, 45, 18, 0.4), 0 0 0 6px rgba(234, 88, 12, 0.2) !important; }
-        body.mode-autumn .card.is-fixed i { transform: scale(1.3); color: #c2410c !important; }
-        body.mode-autumn #connector-layer-bg path { stroke: #fdba74; opacity: 0.5; } 
-        body.mode-autumn .legend { background: #fff7ed; border-color: #fdba74; }
-        body.mode-autumn .btn-theme, body.mode-autumn .btn-lang { background-color: #ffedd5; color: #c2410c; border-color: #fdba74; }
-        body.mode-autumn .btn-clock { background-color: #fff7ed; color: #c2410c; border-color: #fdba74; }
-
-        /* INVIERNO */
-        body.mode-winter { background-color: #0f172a !important; color: #e2e8f0; }
-        body.mode-winter h1 { color: #f1f5f9; }
-        body.mode-winter .search-box input { background: #1e293b; color: white; border-color: #475569; }
-        body.mode-winter .search-box input:focus { background: #334155; border-color: var(--col-core); }
-        body.mode-winter .btn-reset { background: #1e293b; border-color: #475569; color: #cbd5e1; }
-        body.mode-winter .column { background: rgba(30, 41, 59, 0.7); border-color: #334155; }
-        body.mode-winter .col-title { color: #cbd5e1; border-bottom-color: #334155; }
-        body.mode-winter .card { background-color: #1e293b; border-color: #334155; color: #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); }
-        body.mode-winter .card-name { color: #f1f5f9; }
-        body.mode-winter .card i { opacity: 0.9; }
-        body.mode-winter .card.highlight { background: #f8fafc; color: #0f172a; }
-        body.mode-winter .card.highlight .card-name { color: #0f172a; }
-        body.mode-winter .card.is-fixed { background-color: #e2e8f0 !important; color: #0f172a !important; border-color: #ffffff !important; box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.9), 0 0 0 4px rgba(255, 255, 255, 0.15) !important, 0 0 30px rgba(59, 130, 246, 0.5) !important; }
-        body.mode-winter .card.is-fixed i { transform: scale(1.3); color: #2563eb !important; }
-        body.mode-winter #connector-layer-bg path { stroke: #475569; opacity: 0.3; }
-        body.mode-winter .legend { background: #1e293b; border-color: #334155; }
-        body.mode-winter .legend-item { color: #cbd5e1; }
-        body.mode-winter .btn-theme, body.mode-winter .btn-lang { background-color: #334155; color: #93c5fd; border-color: #475569; }
-        body.mode-winter .btn-clock { background-color: #1e293b; color: #cbd5e1; border-color: #475569; }
-        body.mode-winter [data-tooltip]:hover::after { background-color: #ffffff !important; color: #0f172a !important; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-weight: 600; }
-        body.mode-winter .col-title[data-tooltip]:hover::before { border-bottom-color: #ffffff !important; }
-        body.mode-winter .card[data-tooltip]:hover::before { border-top-color: #ffffff !important; }
-        body.mode-winter .cross-nodes .card[data-tooltip]:hover::before { border-bottom-color: #ffffff !important; border-top-color: transparent !important; }
-
-        /* PRIMAVERA */
-        body.mode-spring { background-color: #dcfce7 !important; color: #064e3b; }
-        body.mode-spring h1 { color: #059669; }
-        body.mode-spring .search-box input { background: #f0fdfa; color: #064e3b; border-color: #4ade80; }
-        body.mode-spring .search-box input:focus { border-color: #db2777; background: #fff; box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.3); }
-        body.mode-spring .btn-base { background: #f0fdf4; border-color: #86efac; color: #15803d; }
-        body.mode-spring .btn-base:hover { background: #dcfce7; border-color: #22c55e; }
-        body.mode-spring .btn-reset { color: #db2777; border-color: #fbcfe8; background: #fdf2f8; }
-        body.mode-spring .btn-reset:hover { background: #fce7f3; }
-        body.mode-spring .column { background: rgba(255, 255, 255, 0.95); border: 1px solid #86efac; box-shadow: 0 4px 10px rgba(6, 78, 59, 0.05); }
-        body.mode-spring .column:hover { border-color: #db2777; } 
-        body.mode-spring .col-title { color: #15803d; border-bottom-color: #4ade80; }
-        body.mode-spring .card { background-color: #ffffff; border-color: #86efac; color: #064e3b; box-shadow: 0 2px 4px rgba(6, 78, 59, 0.08); }
-        body.mode-spring .card-name { color: #064e3b; }
-        body.mode-spring .card.is-fixed { background-color: #fdf2f8 !important; border-color: #db2777 !important; color: #831843 !important; box-shadow: 0 25px 50px -12px rgba(219, 39, 119, 0.3), 0 0 0 6px rgba(244, 114, 182, 0.3) !important; }
-        body.mode-spring .card.is-fixed i { transform: scale(1.3); color: #db2777 !important; }
-        body.mode-spring #connector-layer-bg path { stroke: #4ade80; opacity: 0.6; } 
-        body.mode-spring .legend { background: #ecfdf5; border-color: #4ade80; }
-        body.mode-spring .btn-theme, body.mode-spring .btn-lang { background-color: #fdf2f8; color: #db2777; border-color: #fbcfe8; }
-        body.mode-spring .btn-theme:hover { background-color: #fce7f3; }
-        body.mode-spring .btn-clock { background-color: #ecfdf5; color: #15803d; border-color: #86efac; }
-
-        /* Herramientas de Dibujo y Texto */
-        #layer-draw, #layer-text { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99900; pointer-events: none; }
-        body.mode-draw #layer-draw { pointer-events: auto; cursor: crosshair; }
-        body.mode-text #layer-text { pointer-events: auto; cursor: text; background: rgba(255,255,255,0.1); }
-        .btn-tool.active { background-color: #f59e0b; color: white; border-color: #d97706; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
-        .note-item { position: absolute; background: #fef08a; border: 1px solid #eab308; color: #422006; padding: 5px 10px; border-radius: 4px; font-size: 12px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); max-width: 200px; pointer-events: auto; }
-        .note-input { position: absolute; border: 2px solid #3b82f6; padding: 5px; background: white; font-size: 12px; z-index: 99999; }
-
-        /* ESTILOS PARA LOS FILTROS DE ENFOQUE */
-        body.view-int .column:not(.c-int) { opacity: 0.1; filter: grayscale(100%); pointer-events: none; }
-        body.view-core .column:not(.c-core) { opacity: 0.1; filter: grayscale(100%); pointer-events: none; }
-        body.view-admin .column:not(.c-admin) { opacity: 0.1; filter: grayscale(100%); pointer-events: none; }
-        body.view-exp .column:not(.c-exp) { opacity: 0.1; filter: grayscale(100%); pointer-events: none; }
-        body.view-tal .column:not(.c-tal) { opacity: 0.1; filter: grayscale(100%); pointer-events: none; }
-
-        /* =========================================================================
-           ESTILOS MODO PROYECTO (CHECKLIST)
-           ========================================================================= */
-        .project-bar {
-            background: #1e293b;
-            color: white;
-            padding: 8px 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 99999;
-            height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        body.mode-project .project-bar { height: 40px; opacity: 1; }
-
-        .project-info { display: flex; align-items: center; gap: 10px; font-weight: 700; white-space: nowrap; font-size: 0.8rem; }
-        .p-percent { color: #4ade80; font-size: 1.1rem; }
-
-        .progress-track {
-            flex: 1; height: 10px; background: rgba(255,255,255,0.1);
-            border-radius: 10px; overflow: hidden; max-width: 600px;
-        }
-        .progress-fill {
-            height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80);
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
-        }
-
-        .project-legend { display: flex; gap: 15px; font-size: 0.7rem; color: #94a3b8; margin-left: auto; }
-        .pleg-item { display: flex; align-items: center; gap: 5px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .d-gray { background: #cbd5e1; }
-        .d-yellow { background: #fbbf24; }
-        .d-green { background: #22c55e; }
-
-        #btn-project.active { background-color: #3b82f6; color: white; border-color: #2563eb; }
-
-        /* ESTADOS DE LAS TARJETAS (Solo activos en mode-project) */
-        body.mode-project .card.status-none {
-            background: #f1f5f9 !important; color: #94a3b8 !important; border-color: #e2e8f0 !important;
-            opacity: 0.6; filter: grayscale(100%); box-shadow: none;
-        }
-        body.mode-project .card.status-none i { color: #cbd5e1 !important; }
-
-        body.mode-project .card.status-wip {
-            background: #fffbeb !important; color: #b45309 !important; border-color: #f59e0b !important;
-            border-left-width: 5px !important; box-shadow: 0 4px 6px rgba(245, 158, 11, 0.1);
-        }
-        body.mode-project .card.status-wip i { color: #d97706 !important; transform: rotate(-10deg); }
-
-        body.mode-project .card.status-done {
-            background: #dcfce7 !important; color: #166534 !important; border-color: #22c55e !important;
-            border-left-width: 5px !important; box-shadow: 0 4px 6px rgba(34, 197, 94, 0.2); font-weight: 700;
-        }
-        body.mode-project .card.status-done::after {
-            content: '✓'; position: absolute; right: 5px; top: 2px; font-size: 10px; color: #166534;
-        }
-        body.mode-project .card.status-done i { color: #16a34a !important; }
-
-        /* =========================================================================
-           MODO EXPLICATIVO (CLIENTE) - ESTILOS NUEVOS
-           ========================================================================= */
-        /* SWITCH DE MODO - NUEVO ESTILO PILL */
-        .mode-toggle {
-            display: flex; position: relative;
-            background: #e2e8f0; border-radius: 20px;
-            padding: 2px; cursor: pointer; border: 1px solid #cbd5e1;
-            width: 200px; height: 32px; align-items: center;
-            user-select: none; transition: all 0.3s ease;
-        }
-        .toggle-option {
-            flex: 1; text-align: center; font-size: 0.7rem; font-weight: 700;
-            z-index: 2; color: #64748b; transition: color 0.3s;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .toggle-slider {
-            position: absolute; top: 2px; left: 2px;
-            width: calc(50% - 2px); height: 26px;
-            background: white; border-radius: 18px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-            z-index: 1;
-        }
-        
-        /* Estado Activo (Presentación) */
-        body.mode-explain .toggle-slider { transform: translateX(100%); background: #f59e0b; }
-        body.mode-explain .mode-toggle { border-color: #f59e0b; background: #fef3c7; }
-        body.mode-explain #opt-pres { color: white; }
-        body:not(.mode-explain) #opt-arch { color: #0f172a; }
-
-        .info-popup {
-            display: none; position: fixed; width: 420px; max-width: 90vw;
-            background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(8px);
-            border-left: 5px solid #3b82f6; border-radius: 0 8px 8px 0;
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.05);
-            z-index: 300000; padding: 20px; font-family: 'Inter', sans-serif;
-            pointer-events: none; opacity: 0; transform: translateY(10px);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .info-popup.visible { display: block; opacity: 1; transform: translateY(0); }
-
-        .ip-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
-        .ip-icon { font-size: 1.6rem; color: #3b82f6; width: 40px; text-align: center; }
-        .ip-title { font-size: 1rem; font-weight: 800; color: #0f172a; text-transform: uppercase; line-height: 1.2; }
-        .ip-lang { margin-left: auto; font-size: 0.65rem; font-weight: 700; color: #94a3b8; border: 1px solid #e2e8f0; padding: 2px 6px; border-radius: 4px; }
-
-        .ip-label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 12px; display: block; margin-bottom: 4px; }
-        .ip-text { font-size: 0.85rem; color: #334155; line-height: 1.5; }
-        .ip-list { margin: 0; padding-left: 18px; color: #334155; font-size: 0.85rem; }
-        .ip-list li { margin-bottom: 4px; }
-
-        /* Apagar capa técnica */
-        body.mode-explain #connector-layer-bg,
-        body.mode-explain #connector-layer-fg, 
-        body.mode-explain #label-layer { opacity: 0 !important; transition: opacity 0.4s; }
-        body.mode-explain .card { cursor: help !important; }
-        body.mode-explain .card:hover { 
-            z-index: 200 !important; transform: scale(1.05); 
-            border-color: #3b82f6 !important; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important;
-            background: white !important;
-        }
-
-        /* OCULTAR FLECHAS AL FILTRAR */
-        body[class*="view-"] #connector-layer-fg,
-        body[class*="view-"] #connector-layer-bg {
-            opacity: 0 !important;
-            transition: opacity 0.3s;
-        }
-
-        /* =========================================================================
-           POPUP TÉCNICO YML (MODIFICADO - SOLO 3 COLUMNAS)
-           ========================================================================= */
-        #techPopup {
-            display: none;
-            position: fixed;
-            width: 380px;
-            max-width: 40vw;
-            max-height: 40vh;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(12px);
-            border-left: 5px solid #3b82f6;
-            border-radius: 0 12px 12px 0;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(59, 130, 246, 0.1);
-            z-index: 300001;
-            padding: 0;
             font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            pointer-events: auto;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.3s, transform 0.3s;
+            background: #f8fafc;
+            color: var(--dark);
+            padding: 12px;
+            max-width: 1200px;
+            margin: 0 auto;
+            line-height: 1.4;
         }
 
-        #techPopup.visible {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .tech-header {
+        /* ===== HEADER COMPACTO ===== */
+        .header {
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            padding: 18px 24px;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: white;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-light);
         }
 
-        .tech-header h3 {
-            margin: 0;
-            font-size: 0.7rem;
-            font-weight: 800;
+        .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            gap: 8px;
         }
 
-        .tech-header h3 i {
-            font-size: 1.0rem;
-            color: #60a5fa;
-        }
-
-        .tech-close {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-            line-height: 1;
+            color: white;
         }
 
-        .tech-close:hover {
-            background: rgba(239, 68, 68, 0.9);
-            transform: scale(1.1);
-        }
-
-        .tech-content {
-            padding: 0;
-            overflow-y: auto;
-            max-height: calc(80vh - 70px);
-        }
-
-        .tech-table-container {
-            overflow-x: auto;
-            padding: 5px;
-        }
-
-        .tech-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.5rem;
-            min-width: 280px;
-        }
-
-        .tech-table thead {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #f8fafc;
-        }
-
-        .tech-table th {
-            padding: 10px 12px;
-            text-align: left;
-            font-weight: 800;
-            color: #334155;
-            border-bottom: 2px solid #e2e8f0;
-            white-space: nowrap;
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            letter-spacing: 0.5px;
-        }
-
-        /* SOLO 3 COLUMNAS - AJUSTE DE ANCHOS */
-        .tech-table th:nth-child(1) { width: 25%; min-width: 80px; }
-        .tech-table th:nth-child(2) { width: 25%; min-width: 80px; }
-        .tech-table th:nth-child(3) { width: 50%; min-width: 140px; }
-
-        .tech-table td {
-            padding: 10px 15px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #475569;
-            vertical-align: top;
-            line-height: 1.4;
-        }
-
-        .tech-table tbody tr {
-            transition: background-color 0.2s;
-        }
-
-        .tech-table tbody tr:hover {
-            background-color: #f8fafc;
-        }
-
-        /* Estilo para primera columna (Tabla BD) */
-        .tech-table td:first-child {
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            color: #dc2626;
-            font-size: 0.72rem;
-        }
-
-        /* Estilo para segunda columna (Clave) */
-        .tech-table td:nth-child(2) {
-            color: #0f172a;
+        .logo-text h1 {
+            font-size: 1.1rem;
             font-weight: 700;
-            background: #f1f5f9;
-            border-radius: 4px;
-            padding: 8px 12px;
-            margin: 2px 0;
-            display: inline-block;
         }
 
-        /* Estilo para tercera columna (Significado) */
-        .tech-table td:nth-child(3) {
-            color: #475569;
-            font-size: 0.8rem;
-            line-height: 1.4;
+        .logo-text p {
+            font-size: 0.7rem;
+            color: var(--gray);
         }
 
-        .tech-empty {
-            text-align: center;
-            padding: 40px 20px;
-            color: #94a3b8;
-            font-style: italic;
+        /* ===== CONTROLES ===== */
+        .controls {
+            display: flex;
+            gap: 8px;
         }
 
-        .tech-empty i {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            display: block;
-            color: #cbd5e1;
-        }
-
-        /* Modo oscuro para popup técnico */
-        body.mode-winter #techPopup {
-            background: rgba(15, 23, 42, 0.98);
-            border-left-color: #60a5fa;
-            color: #e2e8f0;
-        }
-
-        body.mode-winter .tech-header {
-            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
-        }
-
-        body.mode-winter .tech-table th {
-            background: #1e293b;
-            color: #cbd5e1;
-            border-bottom-color: #334155;
-        }
-
-        body.mode-winter .tech-table td {
-            color: #cbd5e1;
-            border-bottom-color: #334155;
-        }
-
-        body.mode-winter .tech-table tbody tr:hover {
-            background-color: #1e293b;
-        }
-
-        body.mode-winter .tech-table td:nth-child(2) {
-            background: #334155;
-            color: #f1f5f9;
-        }
-
-        body.mode-winter .tech-table td:first-child {
-            color: #f87171;
-        }
-
-        /* MEJORA UX: ÍCONO ⚙️ PARA DATOS TÉCNICOS (SOLO CLIC) */
-        .card-tech-icon {
-            position: absolute;
-            top: 2px;
-            right: 5px;
-            font-size: 0.2rem;
-            color: #94a3b8;
+        .btn {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid var(--gray-light);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
-            opacity: 0.7;
+            display: flex;
+            align-items: center;
+            gap: 5px;
             transition: all 0.2s ease;
-            z-index: 20;
-            pointer-events: auto;
         }
 
-        .card-tech-icon:hover {
+        .btn:hover {
+            background: var(--light);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+        }
+
+        /* ===== FLUJO PRINCIPAL DESTACADO ===== */
+        .main-flow {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-primary);
+            border: 2px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flow-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .flow-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-title i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .flow-title-text {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .flow-subtitle {
+            font-size: 0.75rem;
+            color: var(--gray);
+            background: var(--primary-bg);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .flow-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 10px;
+            padding: 10px 0;
+        }
+
+        .flow-line {
+            position: absolute;
+            top: 28px;
+            left: 40px;
+            right: 40px;
+            height: 3px;
+            background: var(--gray-lighter);
+            z-index: 1;
+        }
+
+        .flow-progress {
+            position: absolute;
+            top: 28px;
+            left: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            z-index: 2;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 8px rgba(220, 38, 38, 0.3);
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 3;
+            width: 80px;
+            cursor: pointer;
+            padding: 8px 4px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .flow-step:hover {
+            background: var(--primary-bg);
+            transform: translateY(-2px);
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border: 2px solid var(--gray-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gray);
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .flow-step.active .step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
+        }
+
+        .flow-step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .step-status {
+            font-size: 0.65rem;
+            color: var(--gray);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        /* ===== FLUJO SECUNDARIO (MÓDULOS/CONEXIONES) - MÁS SUTIL ===== */
+        .modules-flow {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-light);
+        }
+
+        .modules-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .modules-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modules-title i {
+            color: var(--info);
+            font-size: 0.9rem;
+        }
+
+        .modules-title-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .modules-subtitle {
+            font-size: 0.7rem;
+            color: var(--gray);
+            background: var(--gray-lighter);
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .modules-track {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            padding: 15px 0;
+            min-height: 70px;
+        }
+
+        .modules-line {
+            position: absolute;
+            top: 50%;
+            left: 40px;
+            right: 40px;
+            height: 1px;
+            background: var(--gray-lighter);
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .modules-progress {
+            position: absolute;
+            top: 50%;
+            left: 40px;
+            height: 1px;
+            background: var(--info);
+            z-index: 2;
+            transform: translateY(-50%);
+            transition: width 0.4s ease;
+            opacity: 0.5;
+        }
+
+        .module-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+            min-width: 80px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .module-node:hover {
             opacity: 1;
-            color: #3b82f6;
-            transform: rotate(30deg);
         }
 
-        /* Modo oscuro */
-        body.mode-winter .card-tech-icon {
-            color: #cbd5e1;
-        }
-        
-        body.mode-winter .card-tech-icon:hover {
-            color: #60a5fa;
-        }
-
-        /* Modo otoño */
-        body.mode-autumn .card-tech-icon:hover {
-            color: #ea580c;
-        }
-
-        /* Modo primavera */
-        body.mode-spring .card-tech-icon:hover {
-            color: #db2777;
+        .module-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 6px;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            background: var(--gray);
         }
 
-        /* Ocultar el pseudo-elemento anterior */
-        .card.has-tech::after {
-            display: none !important;
+        .module-circle.completed {
+            background: var(--success);
+        }
+
+        .module-circle.active {
+            background: var(--info);
+            transform: scale(1.05);
+        }
+
+        .module-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.2;
+            color: var(--dark);
+        }
+
+        .module-status {
+            font-size: 0.65rem;
+            color: var(--gray);
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        /* ===== PANEL PRINCIPAL COMPACTO ===== */
+        .main-panel {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            min-height: 300px;
+        }
+
+        .panel-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        /* ===== CV UPLOAD ===== */
+        .upload-mini {
+            border: 2px dashed var(--gray-light);
+            border-radius: 6px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .upload-mini:hover {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .upload-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 0.85rem;
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .upload-subtext {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        /* ===== DATOS EXTRAÍDOS ===== */
+        .data-extracted {
+            background: var(--success-light);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            font-size: 0.8rem;
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .data-value {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* ===== MÓDULOS EN CHIPS ===== */
+        .modules-chips {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .module-chip {
+            background: var(--gray-lighter);
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            border-left: 2px solid var(--info);
+            cursor: help;
+            transition: all 0.2s ease;
+        }
+
+        .module-chip:hover {
+            background: var(--info-light);
+            transform: translateY(-1px);
+        }
+
+        .module-chip i {
+            color: var(--info);
+            font-size: 0.8rem;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* ===== DOCUMENTOS MINI ===== */
+        .documents-mini {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .doc-item {
+            background: var(--gray-lighter);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .doc-item:hover {
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .doc-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            margin: 0 auto 8px;
+        }
+
+        .doc-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .doc-status {
+            font-size: 0.65rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.7rem;
+            padding: 12px;
+            margin-top: 10px;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        /* ===== ANIMACIONES ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .main-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .modules-chips {
+                grid-template-columns: 1fr;
+            }
+            
+            .documents-mini {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-step {
+                width: 60px;
+            }
+            
+            .step-label {
+                font-size: 0.7rem;
+            }
+            
+            .module-node {
+                min-width: 70px;
+            }
+            
+            .module-label {
+                font-size: 0.65rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .flow-step {
+                width: 50px;
+                padding: 4px 2px;
+            }
+            
+            .step-circle {
+                width: 26px;
+                height: 26px;
+                font-size: 0.75rem;
+            }
+            
+            .step-label {
+                font-size: 0.65rem;
+            }
+            
+            .flow-line,
+            .flow-progress {
+                top: 20px;
+                left: 30px;
+                right: 30px;
+            }
+            
+            .module-node {
+                min-width: 60px;
+            }
+            
+            .module-circle {
+                width: 24px;
+                height: 24px;
+                font-size: 0.7rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="logo-text">
+                <h1>ATS Rankmi</h1>
+                <p>Flujo de Reclutamiento Inteligente</p>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="resetBtn">
+                <i class="fas fa-redo"></i>
+                Reiniciar
+            </button>
+            <button class="btn btn-primary" id="simulateBtn">
+                <i class="fas fa-play"></i>
+                Simular CV
+            </button>
+        </div>
+    </div>
 
-    <canvas id="bg-canvas"></canvas>
-
-    <header>
-        <div class="header-left">
-            <h1>RANKMI: <span>MAPA FULL SUITE</span></h1>
+    <!-- FLUJO PRINCIPAL (INTERACTIVO - DESTACADO) -->
+    <div class="main-flow">
+        <div class="flow-header">
+            <div class="flow-title">
+                <i class="fas fa-stream"></i>
+                <span class="flow-title-text">Control de Etapas del Reclutamiento</span>
+            </div>
+            <div class="flow-subtitle">Haz clic en cualquier etapa para navegar</div>
         </div>
         
-        <div class="controls">
-            <div class="control-group">
-                <select id="filterSelect" class="select-feature" title="Filtrar Vista">
-                    <option value="all">Todo</option>
-                    <option value="c-int">Integraciones</option>
-                    <option value="c-core">Hub Core</option>
-                    <option value="c-admin">Admin</option>
-                    <option value="c-exp">Cultura</option>
-                    <option value="c-tal">Talento</option>
-                </select>
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="searchInput" placeholder="Buscar módulo...">
-                </div>
-                <button class="btn-base" id="btn-reset" title="Resetear Vista">
-                    <i class="fa-solid fa-rotate-left"></i>
-                </button>
+        <div class="flow-timeline">
+            <div class="flow-line"></div>
+            <div class="flow-progress" id="mainFlowProgress"></div>
+            
+            <div class="flow-step active" data-step="1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Solicitud</div>
+                <div class="step-status">Activo</div>
             </div>
-
-            <div class="control-group">
-                <button class="btn-base" id="btn-mode-draw" title="Dibujar"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn-base" id="btn-mode-text" title="Nota"><i class="fa-solid fa-font"></i></button>
-                <button class="btn-base" id="btn-project" title="Modo Proyecto / Checklist"><i class="fa-solid fa-list-check"></i></button>
-                
-                <div class="mode-toggle" id="btn-explain" title="Alternar Modo">
-                    <div class="toggle-bg" style="display:flex; width:100%; height:100%; align-items:center;">
-                        <div class="toggle-option" id="opt-arch">Arquitectura</div>
-                        <div class="toggle-option" id="opt-pres">Presentación</div>
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
+            <div class="flow-step" data-step="2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Vacante</div>
+                <div class="step-status">Pendiente</div>
             </div>
-
-            <div class="control-group">
-                <div class="tour-capsule">
-                    <span id="speedDisplay" style="font-size: 0.75rem; color: #047857; font-weight: 700; min-width: 24px;">3s</span>
-                    
-                    <input type="range" id="tourSpeed" min="1000" max="10000" step="500" value="3000" 
-                           title="Ajustar velocidad"
-                           style="width: 80px; margin: 0 8px; cursor: pointer; height: 4px; accent-color: #10b981;">
-                           
-                    <button class="tour-btn" id="btn-tour" title="Iniciar Auto-Tour"><i class="fa-solid fa-play"></i></button>
-                </div>
+            <div class="flow-step" data-step="3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Búsqueda</div>
+                <div class="step-status">Pendiente</div>
             </div>
-
-            <div class="control-group">
-                <button class="btn-base" id="btn-lang" title="Cambiar Idioma"><span id="langText">ES</span></button>
-                <button class="btn-base" id="btn-theme" title="Cambiar Estación"><span id="themeIcon">☀️</span></button>
-                <div class="btn-base btn-clock" id="clockDisplay">--:--</div>
+            <div class="flow-step" data-step="4">
+                <div class="step-circle">4</div>
+                <div class="step-label">Análisis</div>
+                <div class="step-status">Pendiente</div>
             </div>
-        </div>
-    </header>
-
-    <div id="project-bar" class="project-bar">
-        <div class="project-info">
-            <span class="p-label">ESTADO DE IMPLEMENTACIÓN:</span>
-            <span class="p-percent" id="p-percent">0%</span>
-        </div>
-        <div class="progress-track">
-            <div class="progress-fill" id="p-fill" style="width: 0%"></div>
-        </div>
-        <div class="project-legend">
-            <span class="pleg-item"><span class="dot d-gray"></span> No Contratado</span>
-            <span class="pleg-item"><span class="dot d-yellow"></span> En Proceso</span>
-            <span class="pleg-item"><span class="dot d-green"></span> Implementado</span>
+            <div class="flow-step" data-step="5">
+                <div class="step-circle">5</div>
+                <div class="step-label">Selección</div>
+                <div class="step-status">Pendiente</div>
+            </div>
+            <div class="flow-step" data-step="6">
+                <div class="step-circle">6</div>
+                <div class="step-label">Contrato</div>
+                <div class="step-status">Pendiente</div>
+            </div>
+            <div class="flow-step" data-step="7">
+                <div class="step-circle">7</div>
+                <div class="step-label">Alta</div>
+                <div class="step-status">Pendiente</div>
+            </div>
         </div>
     </div>
 
-    <svg id="connector-layer-bg"></svg>
-    <svg id="connector-layer-fg">
-        <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6" /></marker>
-            <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" /></marker>
-            <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#f97316" /></marker>
-            <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" /></marker>
-        </defs>
-    </svg>
-    <div id="label-layer"></div>
-
-    <div class="main-layout" id="layout">
-        <div class="cross-nodes">
-            <div class="card genius-card" id="genius" tabindex="0" data-tooltip="Motor de Inteligencia Artificial que potencia todos los módulos."><i class="fa-solid fa-wand-magic-sparkles"></i> <div class="card-name">GENIUS AI</div></div>
-            <div class="card analytics-card" id="rep" tabindex="0" data-tooltip="Tableros de control y reportes cruzados de toda la suite."><i class="fa-solid fa-chart-pie"></i> <div class="card-name">Analytics Dashboard</div></div>
-        </div>
-
-        <div class="columns-container">
-            <div class="column c-int">
-                <div class="col-title" id="col-int" data-tooltip="Unifica tu ecosistema digital integrando sistemas, aplicaciones y servicios externos para un flujo de datos continuo y seguro.">CONECTORES, INTEGRACIONES Y EXTERNOS</div>
-                <div class="card" id="int" tabindex="0"><i class="fa-solid fa-network-wired"></i> <div class="card-name">Integrador API</div></div>
-                <div class="card" id="erp" tabindex="0"><i class="fa-solid fa-server"></i> <div class="card-name">ERP / HRIS</div></div>
-                <div class="card" id="sso" tabindex="0"><i class="fa-solid fa-key"></i> <div class="card-name">SSO Auth</div></div>
-                <div class="card" id="app" tabindex="0"><i class="fa-solid fa-mobile-screen"></i> <div class="card-name">APP Mobile</div></div>
-                <div class="card" id="bancos" tabindex="0"><i class="fa-solid fa-building-columns"></i> <div class="card-name">Bancos</div></div>
-                <div class="card" id="imed" tabindex="0" data-tooltip="Conexión para licencias médicas electrónicas y salud."><i class="fa-solid fa-file-medical"></i> <div class="card-name">Imed y Medipass</div></div>
-                <div class="card" id="shl" tabindex="0" data-tooltip="Plataforma líder mundial en evaluaciones psicométricas de talento."><i class="fa-solid fa-clipboard-user"></i> <div class="card-name">Tests psicométricos - SHL</div></div>
-                <div class="card" id="verif_ant" tabindex="0" data-tooltip="Servicio externo de validación de antecedentes legales y financieros."><i class="fa-solid fa-user-shield"></i> <div class="card-name">Verificación de antecedentes personales</div></div>
-                <div class="card extra-box" id="extra-white" tabindex="0"><i class="fa-brands fa-app-store-ios"></i> <div class="card-name">White label app mobile</div></div>
-                </div>
-
-            <div class="column c-core">
-                <div class="col-title" id="col-core" data-tooltip="Centraliza la información, conecta equipos y fortalece la cultura y la experiencia de tus colaboradores. Todo en un solo lugar.">Hub Plataforma base</div>
-                <div class="card" id="master" tabindex="0"><i class="fa-solid fa-users-gear"></i> <div class="card-name">Master Personas</div></div>
-                <div class="card" id="jer" tabindex="0"><i class="fa-solid fa-layer-group"></i> <div class="card-name">Jerarquía</div></div>
-                <div class="card" id="pos" tabindex="0"><i class="fa-solid fa-briefcase"></i> <div class="card-name">Posiciones / Cargos</div></div>
-                <div class="card" id="seg" tabindex="0"><i class="fa-solid fa-people-group"></i> <div class="card-name">Segmentos</div></div>
-                <div class="card" id="perfil" tabindex="0"><i class="fa-regular fa-id-card"></i> <div class="card-name">Perfil General</div></div>
-                <div class="card" id="hub" tabindex="0" data-tooltip="Portal del colaborador: Noticias, accesos directos y widgets."><i class="fa-solid fa-house-laptop"></i> <div class="card-name">HUB / Intranet / Roles</div></div>
-                <div class="card" id="wf" tabindex="0"><i class="fa-solid fa-gears"></i> <div class="card-name">Workflows (Solicitudes)</div></div>
-                <div class="card" id="cal" tabindex="0"><i class="fa-regular fa-calendar-days"></i> <div class="card-name">Calendario</div></div>
+    <!-- FLUJO SECUNDARIO (MÓDULOS/CONEXIONES - SUTIL) -->
+    <div class="modules-flow">
+        <div class="modules-header">
+            <div class="modules-title">
+                <i class="fas fa-project-diagram"></i>
+                <span class="modules-title-text">Módulos y Conexiones Activas</span>
             </div>
-
-            <div class="column c-admin">
-                <div class="col-title" id="col-admin" data-tooltip="Centraliza la gestión laboral y automatiza la nómina para mayor eficiencia operativa.">Administración y Nómina</div>
-                <div class="card" id="raz" tabindex="0"><i class="fa-solid fa-building"></i> <div class="card-name">Razones Sociales</div></div>
-                <div class="card" id="cc" tabindex="0"><i class="fa-solid fa-coins"></i> <div class="card-name">Centro de Costos</div></div>
-                <div class="card" id="asistencia" tabindex="0"><i class="fa-solid fa-clock"></i> <div class="card-name">Control Asistencia</div></div>
-                <div class="card" id="vac" tabindex="0"><i class="fa-solid fa-plane-departure"></i> <div class="card-name">Ausentismo y Vacaciones</div></div>
-                <div class="card" id="nomina" tabindex="0"><i class="fa-solid fa-money-bill-wave"></i> <div class="card-name">Remuneraciones</div></div>
-                <div class="card" id="doc" tabindex="0"><i class="fa-solid fa-file-contract"></i> <div class="card-name">Gestión Documental y Firma digital</div></div>
-                <div class="card" id="org" tabindex="0"><i class="fa-solid fa-sitemap"></i> <div class="card-name">Org. Estructura Organizacional</div></div>
-                </div>
-
-            <div class="column c-exp">
-                <div class="col-title" id="col-exp" data-tooltip="Mejora el compromiso con beneficios, salud y reconocimiento en un entorno motivador.">Cultura y Bienestar</div>
-                <div class="card" id="clima" tabindex="0"><i class="fa-solid fa-face-smile"></i> <div class="card-name">Clima</div></div>
-                <div class="card" id="ef" tabindex="0"><i class="fa-solid fa-clipboard-question"></i> <div class="card-name">Encuestas y Formularios            (E&F)</div></div>
-                <div class="card" id="chatmi" tabindex="0"><i class="fa-solid fa-comment-dots"></i> <div class="card-name">ChatMi</div></div>
-                <div class="card" id="rec" tabindex="0"><i class="fa-solid fa-trophy"></i> <div class="card-name">Reconocimiento</div></div>
-                <div class="card" id="ben" tabindex="0"><i class="fa-solid fa-ticket"></i> <div class="card-name">Beneficios (Internos-Externos)</div></div>
-                <div class="card" id="gift" tabindex="0"><i class="fa-solid fa-gift"></i> <div class="card-name">Gift Cards</div></div>
-                <div class="card" id="tele" tabindex="0"><i class="fa-solid fa-user-doctor"></i> <div class="card-name">Telemedicina</div></div>
-                <div class="card" id="help" tabindex="0"><i class="fa-solid fa-circle-info"></i> <div class="card-name">Centro de Ayuda</div></div>
-            </div>
-
-            <div class="column c-tal">
-                <div class="col-title" id="col-tal" data-tooltip="Potencia el crecimiento del talento con herramientas para atraer, desarrollar y retener.">Talento y Desarrollo</div>
-                <div class="card" id="sel" tabindex="0"><i class="fa-solid fa-user-plus"></i> <div class="card-name">Selección (ATS)</div></div>
-                <div class="card" id="metas" tabindex="0"><i class="fa-solid fa-bullseye"></i> <div class="card-name">Gestion de Metas y Objetivos</div></div>
-                <div class="card" id="des" tabindex="0"><i class="fa-solid fa-chart-line"></i> <div class="card-name">Desempeño</div></div>
-                <div class="card" id="ninebox" tabindex="0" data-tooltip="Matriz de Talento para identificar potencial vs desempeño."><i class="fa-solid fa-th"></i> <div class="card-name">9box y Sucesión</div></div>
-                <div class="card" id="feed" tabindex="0"><i class="fa-solid fa-comments"></i> <div class="card-name">Feedback Continuo</div></div>
-                <div class="card" id="pdi" tabindex="0"><i class="fa-solid fa-road"></i> <div class="card-name">Plan de Desarrollo Individual (PDI)</div></div>
-                <div class="card" id="pda" tabindex="0"><i class="fa-solid fa-list-check"></i> <div class="card-name">Planes Acción</div></div>
-                <div class="card" id="lms" tabindex="0"><i class="fa-solid fa-graduation-cap"></i> <div class="card-name">Centro de aprendizaje (LMS)</div></div>
-            </div>
+            <div class="modules-subtitle">Visualización en tiempo real</div>
         </div>
-
-        </div>
-
-    <div class="legend">
-        <div class="legend-title">Fuente del Dato</div>
-        <div class="legend-item"><span class="dot-leg dot-tech"></span> Backend (Tech)</div>
-        <div class="legend-item"><span class="dot-leg dot-user"></span> Base Usuario</div>
-    </div>
-
-    <canvas id="layer-draw"></canvas>
-    <div id="layer-text"></div>
-
-    <div id="infoPopup" class="info-popup">
-        <div class="ip-header">
-            <div class="ip-icon" id="ip-icon"></div>
-            <div class="ip-title" id="ip-title"></div>
-            <span class="ip-lang" id="ip-lang">ES</span>
-        </div>
-        <div class="ip-body">
-            <span class="ip-label" id="lbl-concept">Concepto</span>
-            <div class="ip-text" id="ip-concept"></div>
-            <span class="ip-label" id="lbl-benefit">Beneficios</span>
-            <ul class="ip-list" id="ip-benefits"></ul>
+        
+        <div class="modules-track" id="modulesTrack">
+            <!-- Módulos dinámicos se generarán aquí -->
         </div>
     </div>
 
-    <!-- POPUP TÉCNICO YML (MODIFICADO - SOLO 3 COLUMNAS) -->
-    <div id="techPopup">
-        <div class="tech-header">
-            <h3><i class="fa-solid fa-code"></i> <span id="techTitle">Especificación Técnica</span></h3>
-            <button class="tech-close" id="techClose">&times;</button>
-        </div>
-        <div class="tech-content">
-            <div class="tech-table-container">
-                <table class="tech-table">
-                    <thead>
-                        <tr>
-                            <!-- SOLO 3 COLUMNAS -->
-                            <th>Tabla BD</th>
-                            <th>Clave</th>
-                            <th>Significado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="techTableBody">
-                        <!-- Los datos YML se cargan aquí dinámicamente -->
-                    </tbody>
-                </table>
+    <!-- PANEL PRINCIPAL -->
+    <div class="main-panel">
+        <!-- COLUMNA IZQUIERDA: CV PARSER -->
+        <div class="panel-section">
+            <div class="section-title">
+                <i class="fas fa-file-import"></i>
+                Subir CV para Análisis
             </div>
-            <div id="techEmpty" class="tech-empty" style="display: none;">
-                <i class="fa-solid fa-database"></i>
-                <p>No hay especificaciones técnicas disponibles para este módulo.</p>
+            
+            <div class="upload-mini" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">Arrastra tu CV aquí</div>
+                <div class="upload-subtext">PDF, DOC, DOCX - Hasta 5MB</div>
+            </div>
+            
+            <div class="section-title">
+                <i class="fas fa-list-check"></i>
+                Datos Extraídos Automáticamente
+            </div>
+            
+            <div class="data-extracted" id="dataExtracted" style="display: none;">
+                <div class="data-item">
+                    <span class="data-label">Nombre:</span>
+                    <span class="data-value">Juan Pérez Rodríguez</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Email:</span>
+                    <span class="data-value">juan.perez@email.com</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Experiencia:</span>
+                    <span class="data-value">5 años (Senior)</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">Match con puesto:</span>
+                    <span class="data-value" style="color: var(--success); font-weight: 700;">85%</span>
+                </div>
             </div>
         </div>
+
+        <!-- COLUMNA DERECHA: MÓDULOS Y DOCUMENTOS -->
+        <div class="panel-section">
+            <div class="section-title">
+                <i class="fas fa-cubes"></i>
+                Módulos Activos en Esta Etapa
+            </div>
+            
+            <div class="modules-chips" id="modulesContainer">
+                <!-- Módulos dinámicos se generarán aquí -->
+            </div>
+            
+            <div class="section-title">
+                <i class="fas fa-folder"></i>
+                Documentos Generados
+            </div>
+            
+            <div class="documents-mini" id="documentsContainer">
+                <!-- Documentos dinámicos se generarán aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>Flujo automatizado de reclutamiento • Integración con Genius AI • Rankmi Full Suite</p>
     </div>
 
     <script>
-        /* =========================================================================
-           SECCIÓN 1: CONFIGURACIÓN Y DATOS (ARQUITECTURA BACKEND REAL)
-           ========================================================================= */
-        const CONFIG = {
-            contact: {
-                email: "emmanuel.nahin@rankmi.com",
-                whatsapp: "56232102341"
+        // ===== CONFIGURACIÓN =====
+        const stages = {
+            1: {
+                name: "Solicitud",
+                modules: [
+                    { name: "Workflows", icon: "fas fa-gears", desc: "Aprobación de solicitud por jefatura" },
+                    { name: "Jerarquía", icon: "fas fa-sitemap", desc: "Define líneas de aprobación" },
+                    { name: "Centro Costos", icon: "fas fa-calculator", desc: "Valida presupuesto disponible" },
+                    { name: "Posiciones", icon: "fas fa-briefcase", desc: "Define requisitos del puesto" }
+                ],
+                connections: [
+                    { name: "Formulario", status: "completado" },
+                    { name: "Workflows", status: "activo" },
+                    { name: "Jerarquía", status: "pendiente" },
+                    { name: "Centro Costos", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Solicitud", icon: "fas fa-file-alt", status: "✓ Listo" },
+                    { name: "Presupuesto", icon: "fas fa-money-bill", status: "⏳ En revisión" }
+                ]
             },
-            links: [
-                // ==========================================
-                // NUEVO CONECTOR (POS -> WF)
-                // ==========================================
-                { s: 'pos', t: 'wf', l: 'Información', src: 'tech' },
-
-                // ==========================================
-                // 1. EL NÚCLEO (HUB - MASTER PERSONAS)
-                // ==========================================
-                { s:'master', t:'hub', l:'Auth & Profile', type:'sync', src:'tech' }, 
-                { s:'master', t:'nomina', l:'Ficha & Cta.Bancaria', type:'sync', src:'tech', dir: 'bi' },
-                { s:'master', t:'perfil', l:'Datos Maestros', type:'sync', src:'tech' },
-                
-                // Conexiones Master (User Token)
-                { s:'master', t:'sel', l:'User Token', type:'sync', src:'tech' }, 
-                { s:'master', t:'lms', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'clima', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'feed', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'chatmi', l:'Active Status', type:'sync', src:'tech' }, 
-                { s:'master', t:'org', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'doc', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'vac', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'ef', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'ben', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'asistencia', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'metas', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'ninebox', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'pdi', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'pda', l:'User Token', type:'sync', src:'tech' },
-                { s:'master', t:'cal', l:'User Token', type:'sync', src:'tech' }, 
-
-                // ==========================================
-                // 2. JERARQUÍA (NUEVA LÓGICA)
-                // ==========================================
-                { s:'jer', t:'des', l:'Relación', src:'tech' },
-                { s:'jer', t:'ninebox', l:'Relación', src:'tech' },
-                { s:'jer', t:'metas', l:'Relación', src:'tech' },
-                { s:'jer', t:'pda', l:'Relación', src:'tech' },
-                { s:'jer', t:'lms', l:'Relación', src:'tech' },
-                { s:'jer', t:'rec', l:'Relación', src:'tech' },
-                { s:'jer', t:'ben', l:'Relación', src:'tech' },
-                { s:'jer', t:'ef', l:'Relación', src:'tech' },
-                { s:'jer', t:'clima', l:'Relación', src:'tech' },
-                { s:'jer', t:'wf', l:'Relación', src:'tech' },
-
-                // ==========================================
-                // 3. POSICIONES (NUEVA LÓGICA)
-                // ==========================================
-                { s:'cc', t:'pos', l:'Información', src:'user' },
-                { s:'org', t:'pos', l:'Información', src:'user' },
-                { s:'master', t:'pos', l:'Información', src:'user' },
-                { s:'raz', t:'pos', l:'Información', src:'user' },
-
-                // ==========================================
-                // 4. OTROS FLUJOS ESTRUCTURALES
-                // ==========================================
-                { s:'raz', t:'nomina', l:'Entidad Legal', src:'tech' },
-                { s:'cc', t:'nomina', l:'Imputación', src:'tech' },
-                { s:'raz', t:'master', l:'Información', src:'user' },
-                
-                // ==========================================
-                // 5. SEGMENTACIÓN
-                // ==========================================
-                { s:'seg', t:'hub', l:'Noticias (Target)', type:'seg', src:'tech' }, 
-                { s:'seg', t:'ben', l:'Beneficios (Target)', type:'seg', src:'tech' },
-                { s:'seg', t:'ef', l:'Encuestas (Target)', type:'seg', src:'tech' },
-                { s:'seg', t:'lms', l:'Cursos Obligatorios', type:'seg', src:'tech' },
-                { s:'seg', t:'pda', l:'Planes Grupales', type:'seg', src:'tech' },
-                { s:'seg', t:'rec', l:'Audiencia', type:'seg', src:'user' },
-                { s:'seg', t:'tele', l:'Cobertura', type:'seg', src:'user' },
-                { s:'seg', t:'gift', l:'Asignación', type:'seg', src:'user' },
-                { s:'seg', t:'chatmi', l:'Acceso', type:'seg', src:'user' },
-                { s:'seg', t:'help', l:'Visibilidad', type:'seg', src:'user' },
-                { s:'seg', t:'wf', l:'Asignación', src:'user' },
-
-                // ==========================================
-                // 6. FLUJOS OPERATIVOS
-                // ==========================================
-                { s:'sel', t:'master', l:'Create User', type:'flow', src:'tech' },
-                { s:'wf', t:'master', l:'Update Movilidad', type:'flow', src:'tech' },
-                { s:'wf', t:'nomina', l:'Update Haberes', type:'flow', src:'tech' },
-                { s:'doc', t:'wf', l:'Genera Carta', type:'flow', src:'tech' },
-
-                // Nuevos Flujos Solicitados
-                { s:'wf', t:'sel', l:'Solicitudes', src:'user' },
-                { s:'wf', t:'ben', l:'Solicitudes', src:'user' },
-                { s:'ben', t:'wf', l:'Solicitud', src:'user' },
-                { s:'cal', t:'vac', l:'Información', src:'user' },
-
-                // Fuente: Usuario/Lógica
-                { s:'nomina', t:'bancos', l:'Txt Dispersión', type:'flow', src:'user' },
-                { s:'asistencia', t:'nomina', l:'Novedades', type:'flow', src:'user' },
-                { s:'vac', t:'asistencia', l:'Justificación', type:'flow', src:'user' },
-                
-                // TALENTO Y DESARROLLO (Restante)
-                { s:'metas', t:'des', l:'Insumo', src:'user' },
-                { s:'des', t:'pdi', l:'Resultado', src:'user' },
-                { s:'des', t:'ninebox', l:'Eje Desempeño', src:'user' },
-                { s:'des', t:'feed', l:'Insumo', src:'user' },
-                { s:'master', t:'des', l:'Evaluado', src:'user' },
-
-                // ==========================================
-                // 7. HUB / WIDGETS
-                // ==========================================
-                { s:'hub', t:'des', l:'Widgets', src:'user' },
-                { s:'hub', t:'ninebox', l:'Widgets', src:'user' },
-                { s:'hub', t:'metas', l:'Widgets', src:'user' },
-                { s:'hub', t:'feed', l:'Widgets', src:'user' },
-                { s:'hub', t:'ben', l:'Widgets', src:'user' },
-                { s:'hub', t:'rec', l:'Widgets', src:'user' },
-                { s:'hub', t:'clima', l:'Widgets', src:'user' },
-
-                // ==========================================
-                // 8. GENIUS AI & ANALYTICS
-                // ==========================================
-                { s:'rep', t:'nomina', l:'Costos', type:'ai', src:'user' },
-                // { s:'rep', t:'clima', l:'eNPS', type:'ai', src:'user' }, <-- ELIMINADA
-                { s:'rep', t:'des', l:'Talent Map', type:'ai', src:'user' },
-                { s:'wf', t:'rep', l:'Reporte', type:'ai', src:'user' },
-                { s:'lms', t:'rep', l:'Reporte', type:'ai', src:'user' },
-
-                { s:'genius', t:'sel', l:'Screening', type:'ai', src:'user' },
-                { s:'feed', t:'genius', l:'Ayudante', src:'user', type:'ai' }, 
-                { s:'pda', t:'genius', l:'Ayudante', src:'user', type:'ai' }, 
-                
-                { s:'rec', t:'genius', l:'Ayudante', src:'user' },
-                { s:'help', t:'genius', l:'Información', src:'user' },
-
-                // ==========================================
-                // 9. INTEGRACIONES EXTERNAS
-                // ==========================================
-                { s:'sso', t:'hub', l:'Auth Token', src:'tech' },
-                { s:'erp', t:'cc', l:'Sync Centros Costo', src:'tech' },
-                { s:'imed', t:'vac', l:'Licencia Médica', src:'user' },
-                { s:'verif_ant', t:'sel', l:'Background Check', src:'user' },
-                { s:'shl', t:'sel', l:'Resultados', src:'user' },
-
-                // CORRECCIÓN White Label -> APP Mobile
-                { s:'extra-white', t:'app', l:'Usuarios App', src:'user' },
-                
-                // Otras conexiones secundarias desde Master
-                { s:'master', t:'rec', l:'User Token', type:'sync', src:'user' },
-                { s:'master', t:'tele', l:'User Token', type:'sync', src:'user' },
-                { s:'master', t:'gift', l:'User Token', type:'sync', src:'user' },
-                
-                { s:'rec', t:'ben', l:'Canje Puntos', type:'flow', src:'user' },
-
-                // --- NUEVOS CONECTORES SOLICITADOS ---
-                { s:'des', t:'pda', l:'Complemento', src:'user' },
-                { s:'feed', t:'ben', l:'Puntos', src:'user' },
-                { s:'clima', t:'genius', l:'Ayudante', type:'ai', src:'user' }
-            ],
-            appTargets: [
-               'master','wf','pos','perfil','jer','seg','hub','cal','nomina',
-               'asistencia','raz','cc','doc','vac','org','chatmi','help','ef','clima',
-               'ben','gift','tele','rec','sel','lms','des','pda','feed','pdi','ninebox','metas'
-            ],
-            translations: {
-                "txt-title": { es: "ECOSISTEMA RANKMI: ARQUITECTURA", en: "RANKMI ECOSYSTEM: ARCHITECTURE", pt: "ECOSSISTEMA RANKMI: ARQUITETURA" },
-                "search-placeholder": { es: "Buscar módulo...", en: "Search module...", pt: "Buscar módulo..." },
-                "btn-reset-title": { es: "Restablecer vista", en: "Reset view", pt: "Redefinir visualización" },
-                "btn-theme-title": { es: "Cambiar Estación", en: "Change Season", pt: "Mudar Estação" },
-                "btn-lang-title": { es: "Cambiar Idioma", en: "Change Language", pt: "Mudar Idioma" },
-                "col-int": { es: "INTEGRACIONES (INPUT/OUTPUT)", en: "INTEGRATIONS", pt: "INTEGRAÇÕES" },
-                "col-int-tip": { es: "Puerta de entrada y salida de datos externos.", en: "Gateway for external data.", pt: "Porta de entrada para dados externos." },
-                "col-core": { es: "HUB & ESTRUCTURA (CORE)", en: "HUB & STRUCTURE", pt: "HUB & ESTRUTURA" },
-                "col-core-tip": { es: "La fuente de la verdad: Identidad y Jerarquía.", en: "Source of truth: Identity & Hierarchy.", pt: "Fonte da verdade: Identidade e Hierarquia." },
-                "col-admin": { es: "GESTIÓN ADMINISTRATIVA", en: "ADMIN MANAGEMENT", pt: "GESTÃO ADMINISTRATIVA" },
-                "col-admin-tip": { es: "Motores de cálculo y gestión documental.", en: "Calculation engines and doc management.", pt: "Motores de cálculo e gestão documental." },
-                "col-exp": { es: "EXPERIENCIA & CULTURA", en: "EXPERIENCE & CULTURE", pt: "EXPERIÊNCIA & CULTURA" },
-                "col-exp-tip": { es: "Módulos segmentados para el colaborador.", en: "Segmented modules for employees.", pt: "Módulos segmentados para o colaborador." },
-                "col-tal": { es: "TALENTO & ESTRATEGIA", en: "TALENT & STRATEGY", pt: "TALENTO & ESTRATÉGIA" },
-                "col-tal-tip": { es: "Ciclo de vida y desarrollo profesional.", en: "Lifecycle and professional development.", pt: "Ciclo de vida e desenvolvimento profissional." },
-                "genius": { name: "GENIUS AI", tip: { es: "Motor transversal de IA.", en: "Cross-platform AI Engine.", pt: "Motor transversal de IA." } },
-                "rep": { name: "Analytics Dashboard", tip: { es: "Consolida KPIs de Nómina, Clima y Desempenho.", en: "Consolidates Payroll, Climate & Performance KPIs.", pt: "Consolida KPIs de Folha, Clima e Desempenho." } },
-                "int": { name: { es: "Integrador API", en: "API Integrator", pt: "Integrador API" } },
-                "erp": { name: "ERP / HRIS" },
-                "sso": { name: "SSO Auth", tip: { es: "Autenticación única (SAML/OIDC).", en: "Single Sign-On.", pt: "Autenticação Única." } },
-                "app": { name: "APP Mobile" },
-                "bancos": { name: { es: "Bancos", en: "Banks", pt: "Bancos" } },
-                "imed": { name: "Imed y Medipass" },
-                "shl": { name: "Tests psicométricos - SHL" },
-                "verif_ant": { name: { es: "Verificación Antecedentes", en: "Background Checks", pt: "Verificación Antecedentes" } },
-                "master": { name: { es: "Master Personas", en: "Master People", pt: "Master Pessoas" }, tip: { es: "Dueño del 'user_token' y datos personales.", en: "Owner of 'user_token'.", pt: "Dono do 'user_token'." } },
-                "jer": { name: { es: "Jerarquía", en: "Hierarchy", pt: "Hierarquia" }, tip: { es: "Relación Jefatura (Reporta a).", en: "Reporting lines.", pt: "Linhas de reporte." } },
-                "pos": { name: { es: "Posiciones / Cargos", en: "Positions", pt: "Posições" }, tip: { es: "Define cupos y requisitos del cargo.", en: "Defines slots and requirements.", pt: "Define vagas e requisitos." } },
-                "seg": { name: { es: "Segmentos", en: "Segments", pt: "Segmentos" }, tip: { es: "Motor de audiencias dinámicas.", en: "Dynamic audience engine.", pt: "Motor de audiências dinâmicas." } },
-                "perfil": { name: { es: "Perfil General", en: "Profile", pt: "Perfil" } },
-                "hub": { name: "HUB / Intranet", tip: { es: "Front principal del usuario.", en: "Main user front.", pt: "Front principal do usuário." } },
-                "wf": { name: { es: "Workflows", en: "Workflows", pt: "Workflows" }, tip: { es: "Motor de solicitudes y aprobaciones.", en: "Request engine.", pt: "Motor de solicitações." } },
-                "cal": { name: { es: "Calendario", en: "Calendar", pt: "Calendário" } },
-                "raz": { name: { es: "Razones Sociales", en: "Legal Entities", pt: "Razões Sociais" } },
-                "cc": { name: { es: "Centro de Costos", en: "Cost Centers", pt: "Centro de Custos" } },
-                "asistencia": { name: { es: "Control Asistencia", en: "Time & Attendance", pt: "Controle de Ponto" } },
-                "vac": { name: { es: "Ausentismo y Vacaciones", en: "Absence & Vacation", pt: "Absenteísmo e Férias" } },
-                "nomina": { name: { es: "Remuneraciones", en: "Payroll", pt: "Remunerações" }, tip: { es: "Cálculo de haberes y descuentos.", en: "Payroll calculation.", pt: "Cálculo de folha." } },
-                "doc": { name: { es: "Gestión Documental", en: "Doc Management", pt: "Gestão Documental" } },
-                "org": { name: { es: "Estructura Org.", en: "Org. Structure", pt: "Estrutura Org." } },
-                "clima": { name: { es: "Clima", en: "Climate", pt: "Clima" } },
-                "ef": { name: { es: "Encuestas (E&F)", en: "Surveys", pt: "Pesquisas" } },
-                "chatmi": { name: "ChatMi" }, 
-                "rec": { name: { es: "Reconocimiento", en: "Recognition", pt: "Reconhecimento" } },
-                "ben": { name: { es: "Beneficios", en: "Benefits", pt: "Benefícios" } },
-                "gift": { name: "Gift Cards" },
-                "tele": { name: { es: "Telemedicina", en: "Telemedicine", pt: "Telemedicina" } },
-                "help": { name: { es: "Centro de Ayuda", en: "Help Center", pt: "Centro de Ajuda" } },
-                "sel": { name: { es: "Selección (ATS)", en: "ATS", pt: "ATS" } },
-                "metas": { name: { es: "Metas y Objetivos", en: "Goals", pt: "Metas" } },
-                "des": { name: { es: "Desempeño", en: "Performance", pt: "Desempenho" } },
-                "ninebox": { name: { es: "9box y Sucesión", en: "9box", pt: "9box" } },
-                "feed": { name: { es: "Feedback", en: "Feedback", pt: "Feedback" } },
-                "pdi": { name: { es: "PDI", en: "IDP", pt: "PDI" } },
-                "pda": { name: { es: "Planes Acción", en: "Action Plans", pt: "Planos de Ação" } },
-                "lms": { name: { es: "LMS", en: "LMS", pt: "LMS" } },
-                "extra-white": { name: "White label app" }
+            2: {
+                name: "Vacante",
+                modules: [
+                    { name: "ATS", icon: "fas fa-user-plus", desc: "Sistema central de selección" },
+                    { name: "Posiciones", icon: "fas fa-briefcase", desc: "Información del puesto" },
+                    { name: "Segmentos", icon: "fas fa-users", desc: "Define audiencia objetivo" }
+                ],
+                connections: [
+                    { name: "Workflows", status: "completado" },
+                    { name: "Jerarquía", status: "completado" },
+                    { name: "Centro Costos", status: "activo" },
+                    { name: "Posiciones", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Vacante", icon: "fas fa-bullhorn", status: "✓ Publicada" },
+                    { name: "Requisitos", icon: "fas fa-list-check", status: "✓ Definidos" }
+                ]
+            },
+            3: {
+                name: "Búsqueda",
+                modules: [
+                    { name: "ATS", icon: "fas fa-user-plus", desc: "Gestión de candidatos" },
+                    { name: "Genius AI", icon: "fas fa-magic", desc: "Pre-análisis de CVs" },
+                    { name: "Portal", icon: "fas fa-globe", desc: "Publicación externa" }
+                ],
+                connections: [
+                    { name: "Centro Costos", status: "completado" },
+                    { name: "Posiciones", status: "completado" },
+                    { name: "ATS", status: "activo" },
+                    { name: "Genius AI", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "CVs Recibidos", icon: "fas fa-file-pdf", status: "24 archivos" },
+                    { name: "Candidatos", icon: "fas fa-user-friends", status: "15 activos" }
+                ]
+            },
+            4: {
+                name: "Análisis",
+                modules: [
+                    { name: "Genius AI", icon: "fas fa-brain", desc: "Análisis inteligente de CV" },
+                    { name: "ATS", icon: "fas fa-user-plus", desc: "Gestión de candidatos" },
+                    { name: "SHL", icon: "fas fa-clipboard-check", desc: "Tests psicométricos" },
+                    { name: "Verificación", icon: "fas fa-user-shield", desc: "Antecedentes personales" }
+                ],
+                connections: [
+                    { name: "ATS", status: "completado" },
+                    { name: "Genius AI", status: "activo" },
+                    { name: "SHL Tests", status: "pendiente" },
+                    { name: "Verificación", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Análisis IA", icon: "fas fa-chart-line", status: "85% match" },
+                    { name: "Reporte", icon: "fas fa-file-chart-pie", status: "✓ Generado" }
+                ]
+            },
+            5: {
+                name: "Selección",
+                modules: [
+                    { name: "SHL", icon: "fas fa-clipboard-check", desc: "Evaluaciones psicométricas" },
+                    { name: "Verificación", icon: "fas fa-user-shield", desc: "Check de antecedentes" },
+                    { name: "Calendario", icon: "fas fa-calendar-alt", desc: "Agenda entrevistas" },
+                    { name: "Hub", icon: "fas fa-comments", desc: "Feedback del comité" }
+                ],
+                connections: [
+                    { name: "Genius AI", status: "completado" },
+                    { name: "SHL Tests", status: "activo" },
+                    { name: "Verificación", status: "pendiente" },
+                    { name: "Calendario", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Tests SHL", icon: "fas fa-chart-bar", status: "92% promedio" },
+                    { name: "Entrevistas", icon: "fas fa-calendar-check", status: "3 agendadas" }
+                ]
+            },
+            6: {
+                name: "Contrato",
+                modules: [
+                    { name: "Documentos", icon: "fas fa-file-contract", desc: "Generación de contrato" },
+                    { name: "Firma Digital", icon: "fas fa-signature", desc: "Firma electrónica" },
+                    { name: "Razón Social", icon: "fas fa-building", desc: "Entidad legal" },
+                    { name: "Nómina", icon: "fas fa-money-check", desc: "Configuración remuneración" }
+                ],
+                connections: [
+                    { name: "SHL Tests", status: "completado" },
+                    { name: "Verificación", status: "completado" },
+                    { name: "Documentos", status: "activo" },
+                    { name: "Firma Digital", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Contrato", icon: "fas fa-file-signature", status: "⏳ En firma" },
+                    { name: "Carta Oferta", icon: "fas fa-handshake", status: "✓ Aceptada" }
+                ]
+            },
+            7: {
+                name: "Alta",
+                modules: [
+                    { name: "Master Personas", icon: "fas fa-users", desc: "Creación de ficha" },
+                    { name: "Portal", icon: "fas fa-house-user", desc: "Acceso colaborador" },
+                    { name: "LMS", icon: "fas fa-graduation-cap", desc: "Cursos onboarding" },
+                    { name: "Nómina", icon: "fas fa-money-check-alt", desc: "Datos remunerativos" }
+                ],
+                connections: [
+                    { name: "Documentos", status: "completado" },
+                    { name: "Firma Digital", status: "completado" },
+                    { name: "Master Personas", status: "activo" },
+                    { name: "Onboarding", status: "pendiente" }
+                ],
+                documents: [
+                    { name: "Ficha Colaborador", icon: "fas fa-id-card", status: "✓ Creada" },
+                    { name: "Onboarding", icon: "fas fa-road", status: "⏳ En curso" }
+                ]
             }
         };
 
-        const svgBg = document.getElementById('connector-layer-bg');
-        const svgFg = document.getElementById('connector-layer-fg');
-        const labelLayer = document.getElementById('label-layer');
-        const cards = document.querySelectorAll('.card');
-        const searchInput = document.getElementById('searchInput');
-        
-        let lockedId = null; 
-        let draggingCard = null;
-        let dragOffsetX = 0;
-        let dragOffsetY = 0;
-        let dragHasMoved = false;
-        
-        let currentLang = 'es'; 
-        let currentSeason = 'summer';
-        let currentTool = null;
-        let isDrawing = false;
-        let tourIndex = 0;
-        let tourCards = [];
-        let isProjectMode = false;
+        // ===== ELEMENTOS DOM =====
+        let currentStage = 1;
+        const totalStages = 7;
+        let animationInterval = null;
 
-        const DOM = {
-            svgBg: document.getElementById('connector-layer-bg'),
-            svgFg: document.getElementById('connector-layer-fg'),
-            labelLayer: document.getElementById('label-layer'),
-            cards: document.querySelectorAll('.card'),
-            searchInput: document.getElementById('searchInput'),
-            canvasDraw: document.getElementById('layer-draw'),
-            ctxDraw: document.getElementById('layer-draw').getContext('2d'),
-            divText: document.getElementById('layer-text')
-        };
-
-        // =============================================================
-        // FUNCIÓN CORE: DIBUJAR LÍNEAS (CON LÓGICA DE INVERSIÓN)
-        // =============================================================
-        function drawLines() {
-            DOM.svgBg.innerHTML = '';
-            const defs = DOM.svgFg.querySelector('defs');
-            DOM.svgFg.innerHTML = '';
-            if(defs) DOM.svgFg.appendChild(defs);
-            DOM.labelLayer.innerHTML = '';
+        // ===== FUNCIONES PRINCIPALES =====
+        function setStage(stageNumber) {
+            currentStage = stageNumber;
+            const stageData = stages[stageNumber];
             
-            const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight); 
-            const w = Math.max(document.body.scrollWidth, document.documentElement.scrollWidth);
-            [DOM.svgBg, DOM.labelLayer, DOM.svgFg].forEach(el => { el.style.height = h + 'px'; el.style.width = w + 'px'; });
+            // Actualizar timeline principal
+            updateMainTimeline(stageNumber);
+            
+            // Actualizar módulos secundarios
+            updateModulesFlow(stageData.connections);
+            
+            // Actualizar módulos en chips
+            updateModulesChips(stageData.modules);
+            
+            // Actualizar documentos
+            updateDocuments(stageData.documents);
+            
+            // Actualizar progreso
+            const progress = ((stageNumber - 1) / (totalStages - 1)) * 100;
+            document.getElementById('mainFlowProgress').style.width = `${progress}%`;
+        }
 
-            const scrollX = window.scrollX;
-            const scrollY = window.scrollY;
-
-            const activeId = draggingCard ? draggingCard.id : lockedId;
-
-            CONFIG.links.forEach(link => {
-                let sId = link.s;
-                let tId = link.t;
-
-                // --- LÓGICA CLAVE: INVERTIR SI EL ACTIVO ES EL DESTINO ---
-                // Si estoy parado en el destino (activeId === tId), invierto s y t
-                // para que visualmente la flecha salga de donde estoy.
-                if (activeId && activeId === tId) {
-                    sId = link.t; 
-                    tId = link.s;
-                }
-
-                const s = document.getElementById(sId);
-                const t = document.getElementById(tId);
-                if(!s || !t) return;
-                
-                const r1 = s.querySelector('i') ? s.querySelector('i').getBoundingClientRect() : s.getBoundingClientRect();
-                const r2 = t.querySelector('i') ? t.querySelector('i').getBoundingClientRect() : t.getBoundingClientRect();
-
-                const x1 = r1.left + r1.width/2 + scrollX; 
-                const y1 = r1.top + r1.height/2 + scrollY;
-                const x2 = r2.left + r2.width/2 + scrollX; 
-                const y2 = r2.top + r2.height/2 + scrollY;
-                
-                let d = '';
-                if (x2 > x1) {
-                    const backLoop = x1 - 60; 
-                    d = `M ${x1} ${y1} C ${backLoop} ${y1}, ${backLoop} ${y2}, ${x2} ${y2}`;
+        function updateMainTimeline(stageNumber) {
+            const steps = document.querySelectorAll('.flow-step');
+            steps.forEach(step => {
+                step.classList.remove('active');
+                const stepNum = parseInt(step.dataset.step);
+                if (stepNum < stageNumber) {
+                    step.classList.add('completed');
                 } else {
-                    const midX = (x1 + x2) / 2;
-                    d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+                    step.classList.remove('completed');
                 }
-
-                const pBg = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                pBg.setAttribute("d", d);
-                DOM.svgBg.appendChild(pBg);
-
-                const pFg = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                pFg.setAttribute("d", d);
-                // Usamos los IDs originales para mantener la referencia de estilos
-                pFg.setAttribute("id", `l-${link.s}-${link.t}`);
                 
-                if(link.type) pFg.classList.add(link.type);
-                if(link.dir === 'bi') pFg.classList.add('bidirectional'); 
-
-                DOM.svgFg.appendChild(pFg);
-
-                // --- ETIQUETAS ---
-                let showLabel = true;
-                if (activeId === 'master' && link.s === 'master') {
-                    if (link.t !== 'sel' && link.l === 'User Token') showLabel = false; 
-                }
-
-                if (link.l && showLabel) { 
-                    const lbl = document.createElement('div');
-                    lbl.className = 'line-label'; lbl.innerText = link.l;
-                    lbl.id = `t-${link.s}-${link.t}`;
-                    
-                    if (link.src === 'user') lbl.classList.add('src-user');
-                    else lbl.classList.add('src-tech');
-                    
-                    // Posicionamiento en el destino VISUAL (x2, y2)
-                    const halfCardWidth = r2.width / 2;
-                    const safetyMargin = 45; 
-                    const totalOffset = halfCardWidth + safetyMargin;
-
-                    if (x2 > x1) lbl.style.left = `${x2 - totalOffset}px`;
-                    else lbl.style.left = `${x2 + totalOffset}px`;
-                    
-                    lbl.style.top = `${y2 - 12}px`;
-                    
-                    DOM.labelLayer.appendChild(lbl);
-                }
-            });
-
-            if(activeId) highlightConnections(activeId);
-        }
-
-        // Función para aplicar estilos (brillo)
-        function highlightConnections(id) {
-            document.body.classList.add('mode-dimmed');
-            const card = document.getElementById(id);
-            if(card) {
-                card.classList.add('highlight');
-                if(id === lockedId || (draggingCard && draggingCard.id === id)) {
-                    card.classList.add('is-fixed');
-                }
-            }
-            CONFIG.links.forEach(l => {
-                if(l.s === id || l.t === id) {
-                    const path = document.getElementById(`l-${l.s}-${l.t}`);
-                    const label = document.getElementById(`t-${l.s}-${l.t}`);
-                    if(path) path.classList.add('active');
-                    if(label) label.classList.add('visible');
-                    const targetId = l.s === id ? l.t : l.s;
-                    const targetCard = document.getElementById(targetId);
-                    if(targetCard) targetCard.classList.add('highlight');
-                }
-            });
-        }
-
-        function clearHighlights() {
-            if(draggingCard) return; 
-            document.body.classList.remove('mode-dimmed');
-            DOM.cards.forEach(x => {
-                x.classList.remove('highlight'); x.classList.remove('is-fixed'); x.classList.remove('search-match');
-            });
-            document.querySelectorAll('#connector-layer-fg path').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.line-label').forEach(l => l.classList.remove('visible'));
-        }
-
-        function resetLayout() {
-            DOM.cards.forEach(card => {
-                card.style.position = ''; card.style.left = ''; card.style.top = ''; card.style.width = ''; card.style.margin = '';
-                card.classList.remove('is-fixed');
-            });
-            lockedId = null;
-            clearHighlights();
-            DOM.searchInput.value = '';
-            stopTour();
-            if (currentTool) {
-                currentTool = null;
-                document.body.classList.remove('mode-draw', 'mode-text');
-                document.getElementById('btn-mode-draw').classList.remove('active');
-                document.getElementById('btn-mode-text').classList.remove('active');
-            }
-            DOM.ctxDraw.clearRect(0, 0, DOM.canvasDraw.width, DOM.canvasDraw.height);
-            DOM.divText.innerHTML = '';
-            setTimeout(drawLines, 100);
-        }
-
-        function resetCard(card) {
-            card.style.position = ''; card.style.left = ''; card.style.top = ''; card.style.margin = ''; card.style.width = '';
-            card.classList.remove('is-fixed');
-            let start = null;
-            function animateReturn(timestamp) {
-                if (!start) start = timestamp;
-                const progress = timestamp - start;
-                drawLines();
-                if (progress < 600) requestAnimationFrame(animateReturn);
-            }
-            requestAnimationFrame(animateReturn);
-        }
-
-        // =============================================================
-        // EVENTOS (Aquí aseguramos que drawLines se llame al seleccionar)
-        // =============================================================
-
-        // Función Helper para fijar tarjeta y REDIBUJAR
-        function setLocked(id) {
-            if (lockedId && lockedId !== id) {
-                const prev = document.getElementById(lockedId);
-                if (prev) resetCard(prev);
-            }
-            lockedId = id;
-            drawLines(); // <--- ESTO ES LA CLAVE para invertir las flechas al hacer clic
-            
-            const card = document.getElementById(id);
-            if(card) card.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
-        }
-
-        DOM.searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            if(term.length < 2) { 
-                if(!lockedId) { clearHighlights(); drawLines(); } // Limpiar si borra
-                return; 
-            }
-            const found = Array.from(DOM.cards).find(c => c.innerText.toLowerCase().includes(term));
-            if(found) {
-                setLocked(found.id);
-                found.classList.add('search-match');
-            }
-        });
-
-        document.addEventListener('mousedown', (e) => {
-            if (explainMode) return; // BLOQUEO PARA MODO EXPLICATIVO
-            
-            // Verificar si es clic en el icono técnico
-            if (e.target.classList.contains('card-tech-icon')) {
-                // No hacer nada aquí, el evento de clic del icono manejará el popup
-                return;
-            }
-            
-            const card = e.target.closest('.card');
-            if (!card || currentTool) return;
-            draggingCard = card; dragHasMoved = false;
-            const rect = card.getBoundingClientRect();
-            dragOffsetX = e.clientX - rect.left; dragOffsetY = e.clientY - rect.top;
-            card.style.width = rect.width + 'px';
-            // Llamamos drawLines aquí para que el drag arranque con las flechas correctas
-            drawLines();
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!draggingCard) return;
-            e.preventDefault(); dragHasMoved = true;
-            const card = draggingCard;
-            card.classList.add('is-dragging'); card.classList.add('is-fixed');
-            card.style.position = 'fixed'; 
-            card.style.left = (e.clientX - dragOffsetX) + 'px'; 
-            card.style.top = (e.clientY - dragOffsetY) + 'px'; 
-            card.style.margin = '0';
-            drawLines();
-        });
-
-        document.addEventListener('mouseup', (e) => {
-            if (!draggingCard) return;
-            const card = draggingCard;
-            if (dragHasMoved) {
-                setLocked(card.id);
-                card.classList.remove('is-dragging'); 
-            } else {
-                // Click simple
-                if (lockedId === card.id) { 
-                    resetCard(card); lockedId = null; clearHighlights(); drawLines(); 
+                // Actualizar estado en texto
+                const statusEl = step.querySelector('.step-status');
+                if (stepNum === stageNumber) {
+                    statusEl.textContent = 'Activo';
+                } else if (stepNum < stageNumber) {
+                    statusEl.textContent = '✓ Completado';
                 } else {
-                    setLocked(card.id);
-                }
-            }
-            draggingCard = null;
-        });
-
-        document.addEventListener('click', (e) => {
-            if (isProjectMode && e.target.closest('.card')) {
-                cycleCardStatus(e.target.closest('.card')); return;
-            }
-            if (!e.target.closest('.card') && !draggingCard && !e.target.closest('.controls') && !e.target.closest('.modal-content') && !e.target.closest('.note-item') && !e.target.closest('.mode-toggle')) {
-                if (lockedId) {
-                    const card = document.getElementById(lockedId); if(card) resetCard(card);
-                    lockedId = null; clearHighlights(); drawLines();
-                }
-            }
-        });
-
-        DOM.cards.forEach(c => {
-            // MouseEnter solo ilumina (sin invertir flechas para no marear)
-            // Si quisieras invertir en hover, cambia highlightConnections por drawLines aquí.
-            c.addEventListener('mouseenter', () => { 
-                if(explainMode) {
-                    showExplainPopup(c);
-                } else if (!lockedId && !draggingCard) {
-                    highlightConnections(c.id); 
+                    statusEl.textContent = 'Pendiente';
                 }
             });
-            c.addEventListener('mouseleave', () => { 
-                if(explainMode) {
-                    domPopup.classList.remove('visible');
-                } else if (!lockedId && !draggingCard) {
-                    clearHighlights(); 
-                }
-            });
-        });
-
-        // =============================================================
-        // RESTO DE FUNCIONES UI
-        // =============================================================
-        document.getElementById('btn-theme').addEventListener('click', () => {
-            const body = document.body;
-            body.classList.remove('mode-autumn', 'mode-winter', 'mode-spring');
-            const seasons = ['summer', 'autumn', 'winter', 'spring'];
-            const icons = { summer: '☀️', autumn: '🍂', winter: '❄️', spring: '🌸' };
-            let idx = seasons.indexOf(currentSeason);
-            idx = (idx + 1) % seasons.length;
-            currentSeason = seasons[idx];
-            if (currentSeason !== 'summer') body.classList.add(`mode-${currentSeason}`);
-            document.getElementById('themeIcon').innerText = icons[currentSeason];
-        });
-
-        document.getElementById('btn-lang').addEventListener('click', () => {
-            const langs = ['es', 'en', 'pt'];
-            let idx = langs.indexOf(currentLang);
-            currentLang = langs[(idx + 1) % langs.length];
-            updateInterfaceLanguage();
-        });
-
-        function updateInterfaceLanguage() {
-            document.getElementById('langText').innerText = currentLang.toUpperCase();
-            ['txt-title', 'txt-reset', 'legend-title', 'leg-flow', 'leg-seg'].forEach(id => {
-                const el = document.getElementById(id); if(el && CONFIG.translations[id]) el.innerText = CONFIG.translations[id][currentLang];
-            });
             
-            // ACTUALIZAR LABELS DEL SWITCH
-            const sw = UI_TEXTS.switch[currentLang];
-            document.getElementById('opt-arch').innerText = sw.arch;
-            document.getElementById('opt-pres').innerText = sw.pres;
-
-            DOM.searchInput.placeholder = CONFIG.translations['search-placeholder'][currentLang];
-            for (const [id, data] of Object.entries(CONFIG.translations)) {
-                if (id.startsWith('col-')) {
-                    const el = document.getElementById(id); 
-                    if(el) { el.innerText = data[currentLang]; el.setAttribute('data-tooltip', CONFIG.translations[id+'-tip'][currentLang]); }
-                } else if (!id.startsWith('txt') && !id.startsWith('season') && !id.startsWith('btn') && !id.startsWith('leg')) {
-                    const card = document.getElementById(id);
-                    if(card && data.name) {
-                        const nameEl = card.querySelector('.card-name');
-                        if(nameEl) nameEl.innerText = (typeof data.name === 'string') ? data.name : data.name[currentLang];
-                        if(data.tip) card.setAttribute('data-tooltip', data.tip[currentLang]);
-                    }
-                }
-            }
+            const activeStep = document.querySelector(`.flow-step[data-step="${stageNumber}"]`);
+            activeStep.classList.add('active');
         }
 
-        setInterval(() => {
-            const now = new Date();
-            const loc = currentLang === 'es' ? 'es-CL' : (currentLang === 'en' ? 'en-US' : 'pt-BR');
-            document.getElementById('clockDisplay').innerText = 
-                `${now.toLocaleDateString(loc, {day:'2-digit', month:'short'})} | ${now.toLocaleTimeString(loc, {hour:'2-digit', minute:'2-digit'})}`;
-        }, 1000);
-
-        document.getElementById('btn-reset').addEventListener('click', () => {
-            if(explainMode) toggleExplainMode();
-            resetLayout();
-        });
-
-        // Herramientas de Dibujo y Texto
-        function activateTool(tool) {
-            const btnDraw = document.getElementById('btn-mode-draw');
-            const btnText = document.getElementById('btn-mode-text');
-            if (currentTool === tool) { 
-                currentTool = null;
-                document.body.classList.remove('mode-draw', 'mode-text');
-                btnDraw.classList.remove('active'); btnText.classList.remove('active'); 
-            } else { 
-                currentTool = tool;
-                document.body.classList.remove('mode-draw', 'mode-text');
-                btnDraw.classList.remove('active'); btnText.classList.remove('active');
-                document.body.classList.add(tool === 'draw' ? 'mode-draw' : 'mode-text');
-                (tool === 'draw' ? btnDraw : btnText).classList.add('active');
-            }
-        }
-        document.getElementById('btn-mode-draw').addEventListener('click', () => activateTool('draw'));
-        document.getElementById('btn-mode-text').addEventListener('click', () => activateTool('text'));
-
-        DOM.canvasDraw.width = window.innerWidth; DOM.canvasDraw.height = window.innerHeight;
-        DOM.ctxDraw.lineWidth = 3; DOM.ctxDraw.lineCap = 'round'; DOM.ctxDraw.strokeStyle = '#ef4444';
-        
-        DOM.canvasDraw.addEventListener('mousedown', (e) => { if(currentTool === 'draw') { isDrawing = true; DOM.ctxDraw.beginPath(); DOM.ctxDraw.moveTo(e.clientX, e.clientY); } });
-        DOM.canvasDraw.addEventListener('mousemove', (e) => { if(isDrawing && currentTool === 'draw') { DOM.ctxDraw.lineTo(e.clientX, e.clientY); DOM.ctxDraw.stroke(); } });
-        DOM.canvasDraw.addEventListener('mouseup', () => isDrawing = false);
-
-        DOM.divText.addEventListener('click', (e) => {
-            if (currentTool !== 'text' || e.target.classList.contains('note-item')) return;
-            const input = document.createElement('input'); input.className = 'note-input';
-            input.style.left = e.clientX + 'px'; input.style.top = e.clientY + 'px';
-            DOM.divText.appendChild(input); input.focus();
-            const save = () => {
-                if(input.value.trim()) {
-                    const note = document.createElement('div'); note.className = 'note-item'; note.innerText = input.value;
-                    note.style.left = input.style.left; note.style.top = input.style.top;
-                    note.ondblclick = function() { this.remove(); };
-                    DOM.divText.appendChild(note);
-                }
-                input.remove();
-            };
-            input.addEventListener('keydown', (k) => { if(k.key === 'Enter') save(); if(k.key === 'Escape') input.remove(); });
-            input.addEventListener('blur', save);
-        });
-
-        // Init
-        window.onload = function() { 
-            drawLines(); setTimeout(drawLines, 500); 
-            const canvas = document.getElementById('bg-canvas'); const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            const particles = Array.from({length: 50}, () => ({
-                x: Math.random()*canvas.width, y: Math.random()*canvas.height, 
-                vx: (Math.random()-.5), vy: (Math.random()-.5), size: Math.random()*2+1
-            }));
-            function anim() {
-                ctx.clearRect(0,0,canvas.width,canvas.height);
-                particles.forEach(p => {
-                    p.x += p.vx; p.y += p.vy;
-                    if(p.x<0||p.x>canvas.width) p.vx*=-1; if(p.y<0||p.y>canvas.height) p.vy*=-1;
-                    ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-                    ctx.fillStyle = document.body.classList.contains('mode-winter') ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.2)';
-                    ctx.fill();
-                });
-                requestAnimationFrame(anim);
-            }
-            anim();
+        function updateModulesFlow(connections) {
+            const modulesTrack = document.getElementById('modulesTrack');
+            modulesTrack.innerHTML = `
+                <div class="modules-line"></div>
+                <div class="modules-progress" id="modulesProgress"></div>
+            `;
             
-            // Marcar módulos con datos técnicos después de cargar
-            setTimeout(markModulesWithTechData, 100);
-        };
-        window.addEventListener('resize', () => { 
-            drawLines(); 
-            DOM.canvasDraw.width = window.innerWidth; DOM.canvasDraw.height = window.innerHeight; 
-            DOM.ctxDraw.lineWidth = 3; DOM.ctxDraw.lineCap = 'round'; DOM.ctxDraw.strokeStyle = '#ef4444';
-        });
-        document.getElementById('filterSelect').addEventListener('change', function(e) {
-            const body = document.body;
-            body.classList.remove('view-int', 'view-core', 'view-admin', 'view-exp', 'view-tal');
-            const val = e.target.value;
-            if(val !== 'all') { body.classList.add('view-' + val.replace('c-', '')); }
-        });
-
-        // Tour Logic
-        const speedInput = document.getElementById('tourSpeed');
-        const speedDisplay = document.getElementById('speedDisplay');
-        speedInput.addEventListener('input', function() {
-            const seconds = parseInt(this.value) / 1000;
-            speedDisplay.innerText = seconds + 's';
-        });
-
-        let tourTimeout = null;
-        let isTourPlaying = false;
-        function stopTour() {
-            if (tourTimeout) clearTimeout(tourTimeout);
-            tourTimeout = null;
-            isTourPlaying = false;
-            const btn = document.getElementById('btn-tour');
-            btn.classList.remove('playing');
-            btn.innerHTML = '<i class="fa-solid fa-play"></i>';
-            clearHighlights();
-            lockedId = null;
-            drawLines(); // Restablece flechas
-        }
-        document.getElementById('btn-tour').addEventListener('click', function() {
-            if (isTourPlaying) { stopTour(); return; }
-            isTourPlaying = true;
-            this.classList.add('playing');
-            this.innerHTML = '<i class="fa-solid fa-stop"></i>';
-            tourCards = Array.from(document.querySelectorAll('.card')).filter(c => c.offsetParent !== null);
-            tourIndex = 0;
-            const step = () => {
-                if (!isTourPlaying) return;
-                if (tourIndex >= tourCards.length) tourIndex = 0;
-                const card = tourCards[tourIndex];
-                setLocked(card.id); // Usamos setLocked para que las flechas se inviertan durante el tour
-                tourIndex++;
-                const currentSpeed = parseInt(document.getElementById('tourSpeed').value);
-                tourTimeout = setTimeout(step, currentSpeed);
-            };
-            step();
-        });
-
-        // Project Mode
-        document.getElementById('btn-project').addEventListener('click', function() {
-            isProjectMode = !isProjectMode;
-            this.classList.toggle('active');
-            document.body.classList.toggle('mode-project');
-            if(isProjectMode) { calculateProgress(); }
-        });
-        function cycleCardStatus(card) {
-            if (card.classList.contains('status-done')) { card.classList.remove('status-done'); } 
-            else if (card.classList.contains('status-wip')) { card.classList.remove('status-wip'); card.classList.add('status-done'); } 
-            else if (card.classList.contains('status-none')) { card.classList.remove('status-none'); card.classList.add('status-wip'); } 
-            else { card.classList.add('status-none'); }
-            card.style.transform = "scale(0.95)";
-            setTimeout(() => card.style.transform = "", 150);
-            calculateProgress();
-        }
-        function calculateProgress() {
-            const allCards = document.querySelectorAll('.columns-container .card'); 
-            const total = allCards.length;
-            let implemented = 0;
-            allCards.forEach(c => { if (c.classList.contains('status-done')) implemented++; });
-            const percent = total === 0 ? 0 : Math.round((implemented / total) * 100);
-            document.getElementById('p-percent').innerText = `${percent}%`;
-            document.getElementById('p-fill').style.width = `${percent}%`;
-            const fill = document.getElementById('p-fill');
-            if(percent < 30) fill.style.background = "#ef4444"; 
-            else if(percent < 70) fill.style.background = "#f59e0b"; 
-            else fill.style.background = "linear-gradient(90deg, #22c55e, #4ade80)"; 
-        }
-
-        /* =========================================================================
-           LÓGICA MODO CLIENTE (EXPLAIN MODE)
-           ========================================================================= */
-        let explainMode = false;
-        const domPopup = document.getElementById('infoPopup');
-
-        // 1. DATOS DEL EXCEL (Cargados Completo)
-        const EXPLAIN_DATA = {
-            "genius": {
-                "es": { "concepto": "Motor de Inteligencia Artificial integrado en toda la Suite Rankmi. No es un módulo aislado, sino una capa de inteligencia que aumenta la eficiencia y el impacto de todas las soluciones.", "beneficio": "Automatización de procesos (ej: resúmenes de desempeño).;Screening de candidatos más rápido y objetivo.;Asistente virtual (ChatMi Doki) para colaboradores.;Recomendaciones proactivas en la toma de decisiones." },
-                "en": { "concepto": "Artificial Intelligence Engine integrated across the entire Rankmi Suite. It's not an isolated module, but an intelligence layer that boosts efficiency.", "beneficio": "Process automation (e.g., performance summaries).;Faster and more objective candidate screening.;Virtual Assistant (ChatMi Doki) for employees.;Proactive recommendations in decision-making." },
-                "pt": { "concepto": "Mecanismo de Inteligência Artificial integrado em toda a Suíte Rankmi. Não é um módulo isolado, mas uma camada de inteligência que aumenta a eficiência.", "beneficio": "Automação de processos (ex: resumos de desempenho).;Triagem de candidatos más rápida e objetiva.;Assistente virtual (ChatMi Doki) para colaboradores.;Recomendações proativas na tomada de decisões." }
-            },
-            "rep": {
-                "es": { "concepto": "Centraliza los datos de toda la suite Rankmi y de sistemas externos, ofreciendo visualizaciones personalizadas y tableros de control ('dashboards').", "beneficio": "Reportes cruzados entre módulos (ej: desempeño vs. clima).;Visualización en tiempo real de KPIs.;Facilita la medición del impacto de iniciativas de RR.HH.;Informes exportables y compartibles." },
-                "en": { "concepto": "Centralizes data from the entire Rankmi suite and external systems, offering personalized visualizations and control dashboards.", "beneficio": "Cross-module reports (e.g., performance vs. climate).;Real-time KPI visualization.;Facilitates measurement of HR initiatives' impact.;Exportable and shareable reports." },
-                "pt": { "concepto": "Centraliza dados de toda a suíte Rankmi e sistemas externos, oferecendo visualizações personalizadas e painéis de controle ('dashboards').", "beneficio": "Relatórios cruzados entre módulos (ex: desempenho vs. clima).;Visualização de KPIs em tempo real.;Facilita a medição do impacto das iniciativas de RH.;Relatórios exportáveis e compartilháveis." }
-            },
-            "master": {
-                "es": { "concepto": "Ficha centralizada y única de cada colaborador. Es la 'Fuente Única de Verdad' (SSoT) para todos los datos del empleado.", "beneficio": "Unifica la información eliminando silos y duplicidad.;Garantiza la trazabilidad y la integridad de los datos maestros.;Base de datos fundamental para el resto de módulos." },
-                "en": { "concepto": "Centralized and unique file for each employee. It is the 'Single Source of Truth' (SSoT) for all employee data.", "beneficio": "Unifies information by eliminating silos and duplication.;Guarantees the traceability and integrity of master data.;Fundamental database for the rest of the integrated modules." },
-                "pt": { "concepto": "Ficha centralizada e única de cada colaborador. É a 'Fonte Única da Verdade' (SSoT) para todos os dados do colaborador.", "beneficio": "Unifica a informação eliminando silos e duplicidade.;Garante a rastreabilidade e integridade dos dados mestres.;Base de dados fundamental para o restante dos módulos." }
-            },
-            "jer": { "es": { "concepto": "Define la estructura organizacional de la compañía, incluyendo líneas de reporte y dependencias.", "beneficio": "Asegura la precisión en los flujos de trabajo.;Proporciona visibilidad de la estructura.;Base de datos para evaluaciones de jefatura." }, "en": { "concepto": "Defines the organizational structure of the company, including reporting lines and dependencies.", "beneficio": "Ensures accuracy in workflows.;Provides structure visibility.;Database for management evaluations." }, "pt": { "concepto": "Define a estrutura organizacional da empresa, incluindo linhas de reporte e dependências.", "beneficio": "Garante a precisão nos fluxos de trabalho.;Proporciona visibilidade da estrutura.;Base de dados para avaliações de chefia." } },
-            "pos": { "es": { "concepto": "Permite definir y catalogar los roles (posiciones) dentro de la organización con sus respectivos datos.", "beneficio": "Estandariza la descripción de puestos.;Facilita asignación de presupuestos.;Base para reclutamiento." }, "en": { "concepto": "Allows defining and cataloging roles (positions) within the organization.", "beneficio": "Standardizes job descriptions.;Facilitates budget allocation.;Basis for recruitment." }, "pt": { "concepto": "Permite definir e catalogar as funções (posições) dentro da organização.", "beneficio": "Padroniza a descrição dos postos.;Facilita a alocação de orçamentos.;Base para recrutamento." } },
-            "seg": { "es": { "concepto": "Permite agrupar a los colaboradores en segmentos dinámicos basados en atributos.", "beneficio": "Personalización masiva de iniciativas.;Máxima relevancia en comunicaciones.;Segmentaci  n automática." }, "en": { "concepto": "Allows grouping employees into dynamic segments based on attributes.", "beneficio": "Mass personalization of HR initiatives.;Maximum relevance in communications.;Automatic segmentation." }, "pt": { "concepto": "Permite agrupar os colaboradores em segmentos dinámicos baseados em atributos.", "beneficio": "Personalização em massa.;Máxima relevância nas comunicações.;Segmentaç  o automática." } },
-            "perfil": { "es": { "concepto": "Es el carné digital y unificado del colaborador, mostrando su información relevante.", "beneficio": "Autoservicio completo.;Visión 360° de la trayectoria.;Acceso directo a documentos." }, "en": { "concepto": "It is the unified digital ID of the employee, showing their relevant information.", "beneficio": "Complete self-service.;360° view of career path.;Direct access to documents." }, "pt": { "concepto": "É a identidade digital unificada do colaborador, mostrando suas informações relevantes.", "beneficio": "Autoatendimento completo.;Visão 360° da trajetória.;Acesso direto a documentos." } },
-            "hub": { "es": { "concepto": "Portal central que actúa como punto de acceso único para el colaborador.", "beneficio": "Mejora la experiencia de usuario.;Permite comunicar noticias segmentadas.;Centraliza la productividad." }, "en": { "concepto": "Central portal that acts as a single point of access for the employee.", "beneficio": "Improves user experience.;Allows effective communication.;Centralizes productivity." }, "pt": { "concepto": "Portal central que atua como ponto de acesso único para o colaborador.", "beneficio": "Melhora a experiência do usuário.;Permite comunicar notícias segmentadas.;Centraliza a produtividade." } },
-            "wf": { "es": { "concepto": "Potente motor de automatización que gestiona, enruta y aprueba solicitudes internas.", "beneficio": "Automatiza procesos y reduce carga.;Garantiza cumplimiento normativo.;Trazabilidad completa." }, "en": { "concepto": "Powerful automation engine that manages, routes, and approves internal requests.", "beneficio": "Automates processes.;Ensures regulatory compliance.;Complete traceability." }, "pt": { "concepto": "Potente motor de automação que gere, encaminha e aprova solicitações internas.", "beneficio": "Automatiza processos.;Garante conformidade regulatória.;Rastreabilidade completa." } },
-            "cal": { "es": { "concepto": "Visualización unificada de eventos clave de la empresa, ausencias y feriados.", "beneficio": "Mejora coordinación interna.;Reduce conflictos de agenda.;Integra datos de ausentismo." }, "en": { "concepto": "Unified visualization of key company events, team absences, and holidays.", "beneficio": "Improves internal coordination.;Reduces schedule conflicts.;Integrates absenteeism data." }, "pt": { "concepto": "Visualização unificada de eventos chave da empresa, ausências e feriados.", "beneficio": "Melhora a coordenação interna.;Reduz conflitos de agenda.;Integra dados de absenteísmo." } },
-            "raz": { "es": { "concepto": "Permite la gestión de múltiples entidades legales o razones sociales.", "beneficio": "Centraliza la administración.;Asegura aplicación de normativas.;Optimiza gestión contable." }, "en": { "concepto": "Allows the management of multiple legal entities.", "beneficio": "Centralizes HR administration.;Ensures regulatory compliance.;Optimizes accounting." }, "pt": { "concepto": "Permite a gestão de múltiplas entidades legais.", "beneficio": "Centraliza a administração.;Garante aplicação de normativas.;Otimiza gestão contábil." } },
-            "cc": { "es": { "concepto": "Herramienta para definir y administrar los centros de costo.", "beneficio": "Control presupuestario detallado.;Imputación contable automática.;Transparencia en gastos." }, "en": { "concepto": "Tool to define and manage cost centers.", "beneficio": "Detailed budgetary control.;Automatic accounting imputation.;Transparency in expenses." }, "pt": { "concepto": "Ferramenta para definir e gerir centros de custo.", "beneficio": "Controle orçamentário detalhado.;Imputação contabil automática.;Transparência em despesas." } },
-            "asistencia": { "es": { "concepto": "Módulo para el registro y gestión de la jornada laboral y horas trabajadas.", "beneficio": "Cumplimiento legal de jornada.;Registro preciso y auditable.;Elimina manipulación de datos." }, "en": { "concepto": "Module for recording and managing the workday and hours worked.", "beneficio": "Legal compliance.;Accurate and auditable recording.;Eliminates data manipulation." }, "pt": { "concepto": "Módulo para registro e gestão da jornada de trabalho.", "beneficio": "Conformidade legal.;Registro preciso e auditável.;Elimina manipulação de dados." } },
-            "vac": { "es": { "concepto": "Permite a los colaboradores solicitar y aprobar tiempos libres y vacaciones.", "beneficio": "Autoservicio simplificado.;Visibilidad de saldos en tiempo real.;Integración con Nómina." }, "en": { "concepto": "Allows employees to request and approve time off and vacations.", "beneficio": "Simplified self-service.;Real-time balance visibility.;Integration with Payroll." }, "pt": { "concepto": "Permite solicitar e aprovar folgas e férias.", "beneficio": "Autoatendimento simplificado.;Visibilidade de saldos em tempo real.;Integração com Folha." } },
-            "nomina": { "es": { "concepto": "Módulo robusto para la liquidación de sueldos y salarios.", "beneficio": "Automatización de la liquidación.;Cálculo preciso en tiempo real.;Generación de TXT bancarios." }, "en": { "concepto": "Robust module for salary and wage liquidation.", "beneficio": "Liquidation automation.;Accurate real-time calculation.;Generation of bank TXT files." }, "pt": { "concepto": "Módulo robusto para a liquidação de salários.", "beneficio": "Automação da liquidação.;Cálculo preciso em tempo real.;Geração de arquivos TXT." } },
-            "doc": { "es": { "concepto": "Digitaliza y gestiona la carpeta del colaborador y la firma digital.", "beneficio": "Elimina el papel.;Asegura cumplimiento legal.;Acceso rápido y auditable." }, "en": { "concepto": "Digitizes and manages employee folders and digital signatures.", "beneficio": "Eliminates paper.;Ensures legal compliance.;Quick and auditable access." }, "pt": { "concepto": "Digitaliza e gere a pasta do colaborador e assinatura digital.", "beneficio": "Elimina o papel.;Garante conformidade legal.;Acesso rápido e auditável." } },
-            "org": { "es": { "concepto": "Visualizador dinámico del organigrama de la empresa.", "beneficio": "Mejora la transparencia.;Facilita navegación y búsqueda.;Se mantiene actualizado automáticamente." }, "en": { "concepto": "Dynamic visualization of the company organizational chart.", "beneficio": "Improves transparency.;Facilitates navigation.;Automatically updated." }, "pt": { "concepto": "Visualizador dinâmico do organograma da empresa.", "beneficio": "Melhora a transparência.;Facilita navegação.;Mantém-se atualizado automaticamente." } },
-            "clima": { "es": { "concepto": "Herramienta de medición del pulso organizacional (Clima, eNPS).", "beneficio": "Medición continua del compromiso.;Garantiza anonimato.;Integración con Analytics." }, "en": { "concepto": "Organizational pulse measurement tool (Climate, eNPS).", "beneficio": "Continuous engagement measurement.;Guarantees anonymity.;Integration with Analytics." }, "pt": { "concepto": "Ferramenta de medição do pulso organizacional (Clima, eNPS).", "beneficio": "Medição contínua do engajamento.;Garante anonimato.;Integração com Analytics." } },
-            "ef": { "es": { "concepto": "Constructor flexible para crear cualquier tipo de encuesta o formulario ad-hoc.", "beneficio": "Máxima flexibilidad.;Segmentaci  n por atributos.;Resultados inmediatos." }, "en": { "concepto": "Flexible builder for creating ad-hoc surveys or forms.", "beneficio": "Maximum flexibility.;Segmentation by attributes.;Immediate results." }, "pt": { "concepto": "Construtor flexível para criar pesquisas ou formulários ad-hoc.", "beneficio": "Máxima flexibilidade.;Segmentação por atributos.;Resultados imediatos." } },
-            "chatmi": { "es": { "concepto": "Plataforma de comunicación interna centralizada.", "beneficio": "Mejora conexión en equipos remotos.;Centraliza comunicación oficial.;Facilita interacción informal." }, "en": { "concepto": "Centralized internal communication platform.", "beneficio": "Enhances connection in remote teams.;Centralizes official communication.;Facilitates informal interaction." }, "pt": { "concepto": "Plataforma de comunicação interna centralizada.", "beneficio": "Melhora conexão em equipes remotas.;Centraliza comunicação oficial.;Facilita interação informal." } },
-            "rec": { "es": { "concepto": "Herramienta para reconocer el buen trabajo a través de medallas y puntos.", "beneficio": "Fomenta cultura de aprecio.;Canje por beneficios.;Impulsa retención." }, "en": { "concepto": "Tool to recognize good work through medals and points.", "beneficio": "Fosters appreciation culture.;Redeem for benefits.;Boosts retention." }, "pt": { "concepto": "Ferramenta para reconhecer o bom trabalho através de medalhas e pontos.", "beneficio": "Fomenta cultura de apreciação.;Troca por benefícios.;Impulsiona retenção." } },
-            "ben": { "es": { "concepto": "Gestor de beneficios flexibles (internos y externos).", "beneficio": "Aumenta valor percibido.;Personaliza la oferta.;Se integra con Nómina." }, "en": { "concepto": "Flexible benefits manager (internal and external).", "beneficio": "Increases perceived value.;Personalizes offering.;Integrates with Payroll." }, "pt": { "concepto": "Gestor de benefícios flexíveis (internos e externos).", "beneficio": "Aumenta valor percebido.;Personaliza a oferta.;Integra-se com Folha." } },
-            "gift": { "es": { "concepto": "Módulo para compra, asignación y canje de Gift Cards.", "beneficio": "Reconocimiento inmediato.;Amplia red de comercios.;Gestión centralizada." }, "en": { "concepto": "Module for purchasing, assigning, and redeeming Gift Cards.", "beneficio": "Immediate recognition.;Wide merchant network.;Centralized management." }, "pt": { "concepto": "Módulo para compra, atribuição e resgate de Gift Cards.", "beneficio": "Reconhecimento imediato.;Ampla rede de comércios.;Gestão centralizada." } },
-            "tele": { "es": { "concepto": "Servicio de telemedicina para el colaborador y su familia.", "beneficio": "Acceso rápido a salud.;Reduce tiempos de espera.;Reduce ausentismo." }, "en": { "concepto": "Telemedicine service for employees and families.", "beneficio": "Fast health access.;Reduces wait times.;Reduces absenteeism." }, "pt": { "concepto": "Serviço de telemedicina para o colaborador e família.", "beneficio": "Acesso rápido à saúde.;Reduz tempos de espera.;Reduz absenteísmo." } },
-            "help": { "es": { "concepto": "Portal de autoservicio con manuales, FAQ y tutoriales.", "beneficio": "Empodera al colaborador.;Disminuye carga de RR.HH.;Respuestas rápidas." }, "en": { "concepto": "Self-service portal with manuals, FAQs, and tutorials.", "beneficio": "Empowers employees.;Reduces HR workload.;Fast answers." }, "pt": { "concepto": "Portal de autoatendimento com manuais, FAQ e tutoriais.", "beneficio": "Empodera o colaborador.;Diminui carga de RH.;Respostas rápidas." } },
-            "sel": { "es": { "concepto": "Sistema de Seguimiento de Candidatos (ATS) que automatiza el reclutamiento.", "beneficio": "Reduce tiempo de contratación.;Asegura trazabilidad.;Experiencia unificada." }, "en": { "concepto": "Applicant Tracking System (ATS) automating recruitment.", "beneficio": "Reduces time to hire.;Ensures traceability.;Unified experience." }, "pt": { "concepto": "Sistema de Rastreamento de Candidatos (ATS) que automatiza o recrutamento.", "beneficio": "Reduz tempo de contratação.;Garante rastreabilidade.;Experiência unificada." } },
-            "metas": { "es": { "concepto": "Herramienta para definición y seguimiento de objetivos (OKR, KPI).", "beneficio": "Alineación estratégica.;Visibilidad en tiempo real.;Base para desempeño." }, "en": { "concepto": "Tool for defining and tracking objectives (OKR, KPI).", "beneficio": "Strategic alignment.;Real-time visibility.;Basis for performance." }, "pt": { "concepto": "Ferramenta para definição e acompanhamento de objetivos (OKR, KPI).", "beneficio": "Alinhamento estratégico.;Visibilidade em tempo real.;Base para desempenho." } },
-            "des": { "es": { "concepto": "Plataforma para evaluaciones de desempeño 360° y por competencias.", "beneficio": "Procesos justos y objetivos.;Identificación de brechas.;Insumos para PDI." }, "en": { "concepto": "Platform for 360° and competency-based performance evaluations.", "beneficio": "Fair and objective processes.;Gap identification.;Inputs for IDP." }, "pt": { "concepto": "Plataforma para avaliações de desempeño 360° e por competências.", "beneficio": "Processos justos e objetivos.;Identificação de lacunas.;Insumos para PDI." } },
-            "ninebox": { "es": { "concepto": "Matriz de Talento 9Box que visualiza Desempeño vs Potencial.", "beneficio": "Planificación basada en datos.;Mitiga fuga de talento.;Mejora decisiones de promoción." }, "en": { "concepto": "9Box Talent Matrix visualizing Performance vs Potential.", "beneficio": "Data-driven planning.;Mitigates talent flight.;Improves promotion decisions." }, "pt": { "concepto": "Matriz de Talentos 9Box que visualiza Desempenho vs Potencial.", "beneficio": "Planejamento baseado em dados.;Mitiga fuga de talentos.;Melhora decisões de promoção." } },
-            "feed": { "es": { "concepto": "Herramienta de feedback continuo y informal entre pares y managers.", "beneficio": "Fomenta cultura abierta.;Insumo clave para evaluación.;Mejora compromiso." }, "en": { "concepto": "Continuous informal feedback tool between peers and managers.", "beneficio": "Fosters open culture.;Key input for evaluation.;Improves engagement." }, "pt": { "concepto": "Ferramenta de feedback contínuo e informal entre pares e gerentes.", "beneficio": "Fomenta cultura aberta.;Insumo chave para avaliação.;Melhora engajamento." } },
-            "pdi": { "es": { "concepto": "Módulo que formaliza rutas de crecimiento y acciones de desarrollo.", "beneficio": "Planes de acción concretos.;Seguimiento del progreso.;Asegura inversión en capacitación." }, "en": { "concepto": "Module establishing growth paths and development actions.", "beneficio": "Concrete action plans.;Progress tracking.;Ensures training investment." }, "pt": { "concepto": "Módulo que formaliza rotas de crescimento e ações de desenvolvimento.", "beneficio": "Planos de ação concretos.;Acompanhamento do progresso.;Garante investimento em capacitação." } },
-            "pda": { "es": { "concepto": "Herramienta para crear tareas correctivas basadas en Clima o Desempeño.", "beneficio": "Cierra ciclo de evaluación.;Define responsables y plazos.;Mide efectividad." }, "en": { "concepto": "Tool to create corrective tasks based on Climate or Performance.", "beneficio": "Closes evaluation cycle.;Defines owners and deadlines.;Measures effectiveness." }, "pt": { "concepto": "Ferramenta para criar tarefas corretivas baseadas em Clima ou Desempenho.", "beneficio": "Fecha ciclo de avaliação.;Define responsáveis e prazos.;Mede eficácia." } },
-            "lms": { "es": { "concepto": "LMS que centraliza la oferta de cursos y material de desarrollo.", "beneficio": "Gestión integral de capacitación.;Rutas personalizadas.;Mide avance en Analytics." }, "en": { "concepto": "LMS centralizing courses and development materials.", "beneficio": "Comprehensive training management.;Personalized paths.;Measures progress in Analytics." }, "pt": { "concepto": "LMS que centraliza a oferta de cursos e material de desenvolvimento.", "beneficio": "Gestão integral de capacitação.;Rotas personalizadas.;Mede avanço no Analytics." } },
-            "int": { "es": { "concepto": "Puerta de enlace para conectar Rankmi con sistemas externos.", "beneficio": "Conectividad total.;Flujo seguro.;Integridad de datos." }, "en": { "concepto": "Gateway to connect Rankmi with external systems.", "beneficio": "Total connectivity.;Secure flow.;Data integrity." }, "pt": { "concepto": "Gateway para conectar Rankmi com sistemas externos.", "beneficio": "Conectividade total.;Fluxo seguro.;Integridade de dados." } },
-            "erp": { "es": { "concepto": "Conexión sincronizada con sistemas ERP o HRIS.", "beneficio": "Elimina duplicidad.;Sincronización bidireccional.;Transferencia de datos clave." }, "en": { "concepto": "Synchronized connection with ERP or HRIS systems.", "beneficio": "Eliminates duplication.;Bidirectional synchronization.;Key data transfer." }, "pt": { "concepto": "Conexão sincronizada com sistemas ERP ou HRIS.", "beneficio": "Elimina duplicidade.;Sincronização bidirecional.;Transferência de dados chave." } },
-            "sso": { "es": { "concepto": "Integración de Inicio de Sesión Único (Single Sign-On).", "beneficio": "Aumenta seguridad.;Mejora adopción.;Cumple estándares empresariales." }, "en": { "concepto": "Single Sign-On (SSO) integration.", "beneficio": "Increases security.;Improves adoption.;Complies with standards." }, "pt": { "concepto": "Integração de Logon Único (Single Sign-On).", "beneficio": "Aumenta segurança.;Melhora adoção.;Cumpre padrões empresariais." } },
-            "app": { "es": { "concepto": "Aplicación móvil nativa para iOS y Android.", "beneficio": "Aumenta accesibilidad.;Mejora experiencia mobile.;Fácil descarga." }, "en": { "concepto": "Native mobile app for iOS and Android.", "beneficio": "Increases accessibility.;Improves mobile experience.;Easy download." }, "pt": { "concepto": "Aplicativo móvel nativo para iOS e Android.", "beneficio": "Aumenta acessibilidade.;Melhora experiência mobile.;Fácil download." } },
-            "bancos": { "es": { "concepto": "Conexión para envío de archivos TXT o integración bancaria.", "beneficio": "Asegura precisión en pagos.;Optimiza tiempo.;Reduce errores." }, "en": { "concepto": "Connection for sending TXT files or banking integration.", "beneficio": "Ensures payment accuracy.;Optimizes time.;Reduces errors." }, "pt": { "concepto": "Conexão para envio de arquivos TXT ou integração bancária.", "beneficio": "Garante precisão em pagamentos.;Otimiza tempo.;Reduz erros." } },
-            "imed": { "es": { "concepto": "Conexión para gestión de licencias médicas electrónicas.", "beneficio": "Digitaliza licencias.;Cumplimiento legal.;Seguimiento simplificado." }, "en": { "concepto": "Connection for electronic sick leave management.", "beneficio": "Digitizes sick leaves.;Legal compliance.;Simplified tracking." }, "pt": { "concepto": "Conexão para gestão de licenças médicas eletrônicas.", "beneficio": "Digitaliza licenças.;Conformidade legal.;Acompanhamento simplificado." } },
-            "shl": { "es": { "concepto": "Integración con SHL para evaluaciones psicométricas.", "beneficio": "Mejora objetividad.;Acceso a herramientas world-class.;Alineación candidato-puesto." }, "en": { "concepto": "Integration with SHL for psychometric evaluations.", "beneficio": "Improves objectivity.;Access to world-class tools.;Candidate-job alignment." }, "pt": { "concepto": "Integração com SHL para avaliações psicométricas.", "beneficio": "Melhora objetividade.;Acesso a ferramentas world-class.;Alinhamento candidato-vaga." } },
-            "verif_ant": { "es": { "concepto": "Integración para validación de antecedentes legales y financieros.", "beneficio": "Reduce riesgo legal.;Proceso rápido.;Integridad en selección." }, "en": { "concepto": "Integration for legal and financial background checks.", "beneficio": "Reduces legal risk.;Fast process.;Integrity in selection." }, "pt": { "concepto": "Integração para validação de antecedentes legais e financeiros.", "beneficio": "Reduz risco legal.;Processo rápido.;Integridade na seleção." } },
-            "extra-white": { "es": { "concepto": "Personalización completa de la app móvil con marca del cliente.", "beneficio": "Refuerza marca.;Experiencia integrada.;Mejora adopción." }, "en": { "concepto": "Full customization of mobile app with client branding.", "beneficio": "Reinforces brand.;Integrated experience.;Improves adoption." }, "pt": { "concepto": "Personalização completa do app móvel com marca do cliente.", "beneficio": "Reforça marca.;Experiência integrada.;Melhora adoção." } }
-        };
-
-        // 2. TEXTOS DE INTERFAZ
-        const UI_TEXTS = {
-            switch: {
-                es: { arch: "Arquitectura", pres: "Presentación" },
-                en: { arch: "Architecture", pres: "Presentation" },
-                pt: { arch: "Arquitetura", pres: "Apresentação" }
-            },
-            labels: { es: {c: "Concepto Clave", b: "Beneficios Clave", na: "Información no disponible"}, en: {c: "Key Concept", b: "Key Benefits", na: "Info not available"}, pt: {c: "Conceito Chave", b: "Benefícios Chave", na: "Informação não disponível"} }
-        };
-
-        // 3. FUNCIONES DEL MODO EXPLICATIVO
-        function toggleExplainMode() {
-            explainMode = !explainMode;
-            // Ya no usamos btn/txt porque es un switch
-            // Solo activamos la clase en el body, y el CSS mueve el slider
-            document.body.classList.toggle('mode-explain', explainMode);
-
-            if (explainMode) {
-                if (lockedId) { resetCard(document.getElementById(lockedId)); lockedId = null; }
-                clearHighlights(); stopTour();
-            } else {
-                domPopup.classList.remove('visible');
-            }
-        }
-
-        function showExplainPopup(card) {
-            if (!explainMode) return;
-            const id = card.id;
-            // Mapeo seguro de datos o fallback
-            const data = (EXPLAIN_DATA[id] && EXPLAIN_DATA[id][currentLang]) 
-                        ? EXPLAIN_DATA[id][currentLang] 
-                        : { concepto: UI_TEXTS.labels[currentLang].na, beneficio: "" };
-
-            // Renderizar
-            document.getElementById('ip-icon').innerHTML = `<i class="${card.querySelector('i').className}"></i>`;
-            document.getElementById('ip-title').innerText = card.querySelector('.card-name').innerText;
-            document.getElementById('ip-lang').innerText = currentLang.toUpperCase();
-            document.getElementById('lbl-concept').innerText = UI_TEXTS.labels[currentLang].c;
-            document.getElementById('ip-concept').innerText = data.concepto;
-            document.getElementById('lbl-benefit').innerText = UI_TEXTS.labels[currentLang].b;
-            
-            const list = document.getElementById('ip-benefits');
-            list.innerHTML = '';
-            if (data.beneficio) {
-                data.beneficio.split(';').forEach(b => { if(b.trim()) list.innerHTML += `<li>${b.trim()}</li>`; });
-                document.getElementById('lbl-benefit').style.display = 'block';
-            } else {
-                document.getElementById('lbl-benefit').style.display = 'none';
-            }
-
-            domPopup.classList.add('visible');
-            positionPopup(card);
-        }
-
-        function positionPopup(card) {
-            const r = card.getBoundingClientRect();
-            const p = domPopup.getBoundingClientRect();
-            let top = r.top; 
-            let left = r.right + 15;
-            
-            if (left + p.width > window.innerWidth) left = r.left - p.width - 15;
-            if (top + p.height > window.innerHeight) top = window.innerHeight - p.height - 15;
-            if (top < 70) top = 70;
-
-            domPopup.style.top = top + 'px'; domPopup.style.left = left + 'px';
-        }
-
-        // 4. INTEGRACIÓN DE EVENTOS (Interceptores)
-        document.getElementById('btn-explain').addEventListener('click', toggleExplainMode);
-
-        DOM.cards.forEach(c => {
-            c.addEventListener('mouseenter', () => { if(explainMode) showExplainPopup(c); });
-            c.addEventListener('mouseleave', () => { if(explainMode) domPopup.classList.remove('visible'); });
-        });
-
-        /* =========================================================================
-           DATOS TÉCNICOS YML (NUEVO)
-           ========================================================================= */
-        const MODULE_TECH_DATA = {
-            "master": [
-                { yml: "base.yml", ent: "Configuración", db: "-", key: "-", req: "N/A", mean: "Archivo base de configuración global" },
-                { yml: "acknowledgment.yml", ent: "Usuarios", db: "users", key: "username", req: "SI", mean: "Nombre de usuario para login" },
-                { yml: "acknowledgment.yml", ent: "Usuarios", db: "users", key: "identifier", req: "SI", mean: "RUT/DNI identificador principal" },
-                { yml: "acknowledgment.yml", ent: "Áreas", db: "areas", key: "depth", req: "SI", mean: "Nivel de profundidad para organigrama" }
-            ],
-            "jer": [
-                { yml: "acknowledgment.yml", ent: "Áreas", db: "areas", key: "depth", req: "SI", mean: "Nivel de profundidad para el organigrama" }
-            ],
-            "int": [
-                { yml: "api.yml", ent: "Usuarios", db: "users", key: "identifier", req: "SI", mean: "Identificador principal (RUT/DNI) en el núcleo" },
-                { yml: "ats.yml", ent: "Cargos", db: "enterprise_positions", key: "slug", req: "SI", mean: "URL amigable para oferta de trabajo" },
-                { yml: "ats.yml", ent: "Áreas", db: "enterprise_areas", key: "code", req: "SI", mean: "Código único del área para reclutamiento" }
-            ],
-            "ben": [
-                { yml: "benefits.yml", ent: "Usuarios", db: "master_users", key: "identifier", req: "SI", mean: "RUT/DNI para canjear beneficios" },
-                { yml: "benefits.yml", ent: "Segmentos", db: "segments", key: "segment_master_token", req: "SI", mean: "Código del grupo de beneficios" }
-            ],
-            "nomina": [
-                { yml: "casham.yml", ent: "Usuarios", db: "users", key: "email", req: "SI", mean: "Correo para gestionar adelantos" },
-                { yml: "casham.yml", ent: "Usuarios", db: "users", key: "rut", req: "SI", mean: "RUT necesario para transacciones" },
-                { yml: "payroll.yml", ent: "Cargos", db: "organization_positions", key: "max_capacity", req: "SI", mean: "Cupo máximo (Headcount)" },
-                { yml: "payroll.yml", ent: "Cargos", db: "organization_positions", key: "employment_mode", req: "SI", mean: "Tipo contrato (Full/Part time)" },
-                { yml: "payroll.yml", ent: "Cargos", db: "organization_positions", key: "critical_position", req: "SI", mean: "Marca si es puesto clave" },
-                { yml: "voucherapi.yml", ent: "Usuarios", db: "users", key: "email", req: "SI", mean: "Correo para gestionar pagos" }
-            ],
-            "hub": [
-                { yml: "celebrations.yml", ent: "Usuarios", db: "user", key: "birthdate", req: "SI", mean: "Fecha nacimiento (Cumpleaños)" },
-                { yml: "celebrations.yml", ent: "Áreas", db: "area", key: "depth", req: "SI", mean: "Profundidad equipo celebraciones" },
-                { yml: "interactions_hub.yml", ent: "Usuarios", db: "users", key: "identifier", req: "SI", mean: "Identidad única Hub interacciones" },
-                { yml: "news.yml", ent: "Segmentos", db: "segments", key: "creator_token", req: "SI", mean: "Autor de la noticia" },
-                { yml: "news.yml", ent: "Usuarios", db: "users", key: "username", req: "SI", mean: "Usuario que comenta/like" },
-                { yml: "social.yml", ent: "Usuarios", db: "users", key: "identifier", req: "SI", mean: "Identidad red social interna" }
-            ],
-            "chatmi": [
-                { yml: "chat.yml", ent: "Usuarios", db: "users", key: "identifier", req: "SI", mean: "Identificador para chat corporativo" },
-                { yml: "chat.yml", ent: "Segmentos", db: "segments", key: "creator_token", req: "SI", mean: "Creador del grupo de chat" }
-            ],
-            "feed": [
-                { yml: "feedback.yml", ent: "Usuarios", db: "users", key: "manager_token", req: "SI", mean: "Jefe (quién evalúa a quién)" },
-                { yml: "feedback.yml", ent: "Áreas", db: "areas", key: "children_count", req: "SI", mean: "Estructura reportes clima" }
-            ],
-            "ef": [
-                { yml: "forms.yml", ent: "Usuarios", db: "users", key: "email", req: "SI", mean: "Correo para enviar respuestas" },
-                { yml: "forms.yml", ent: "Áreas", db: "master_areas", key: "code", req: "SI", mean: "Código área dueña del formulario" }
-            ],
-            "lms": [
-                { yml: "lms.yml", ent: "Usuarios", db: "users", key: "token", req: "SI", mean: "Token usuario para asignar cursos" },
-                { yml: "lms.yml", ent: "Cargos", db: "positions", key: "code", req: "SI", mean: "Código cargo para mallas de cursos" }
-            ],
-            "pda": [
-                { yml: "pda.yml", ent: "Usuarios", db: "users", key: "identifier", req: "SI", mean: "Identificador planes acción" }
-            ],
-            "pdi": [
-                { yml: "pdi.yml", ent: "Usuarios", db: "users", key: "direct_manager_token", req: "SI", mean: "Jefe directo que supervisa" }
-            ],
-            "doc": [
-                { yml: "signature.yml", ent: "Asientos", db: "organization_seats", key: "organization_position_token", req: "SI", mean: "Vinculación legal cargo-persona" },
-                { yml: "signature.yml", ent: "Usuarios", db: "users", key: "nationality", req: "Recomendado", mean: "Nacionalidad para contrato" }
-            ],
-            "tele": [
-                { yml: "telemedicineapi.yml", ent: "Usuarios", db: "users", key: "identifier", req: "SI", mean: "Identificador para agendar horas" }
-            ],
-            "wf": [
-                { yml: "workflow.yml", ent: "Cargos", db: "organization_positions", key: "vacation_approver_token", req: "SI", mean: "Jefe que aprueba vacaciones" },
-                { yml: "workflow.yml", ent: "Cargos", db: "organization_positions", key: "signature_approver_token", req: "SI", mean: "Jefe que firma aprobaciones" }
-            ]
-        };
-
-        /* =========================================================================
-           SISTEMA DE POPUP TÉCNICO YML - MODIFICADO PARA SOLO 3 COLUMNAS
-           ========================================================================= */
-
-        // Variables para el popup técnico
-        let techPopupVisible = false;
-        let currentTechModule = null;
-
-        // Referencias al DOM del popup técnico
-        const techPopup = document.getElementById('techPopup');
-        const techTitle = document.getElementById('techTitle');
-        const techTableBody = document.getElementById('techTableBody');
-        const techEmpty = document.getElementById('techEmpty');
-        const techClose = document.getElementById('techClose');
-
-        // 1. FUNCIÓN PARA MOSTRAR POPUP TÉCNICO (SOLO POR CLIC EN ICONO)
-        function showTechPopup(moduleId, cardElement) {
-            // Obtener datos técnicos
-            const techData = MODULE_TECH_DATA[moduleId];
-            
-            // Configurar título
-            const moduleName = cardElement ? cardElement.querySelector('.card-name').innerText : moduleId;
-            techTitle.textContent = `Especificación Técnica: ${moduleName}`;
-            
-            // Limpiar tabla
-            techTableBody.innerHTML = '';
-            
-            if (techData && techData.length > 0) {
-                // Mostrar datos
-                techEmpty.style.display = 'none';
+            // Crear nodos de módulos
+            connections.forEach((conn, index) => {
+                const node = document.createElement('div');
+                node.className = 'module-node';
                 
-                techData.forEach(item => {
-                    const row = document.createElement('tr');
-                    
-                    // SOLO 3 COLUMNAS: Tabla BD, Clave, Significado
-                    // Usamos item.db, item.key, item.mean
-                    row.innerHTML = `
-                        <td><code>${item.db}</code></td>
-                        <td><strong>${item.key}</strong></td>
-                        <td>${item.mean}</td>
-                    `;
-                    
-                    techTableBody.appendChild(row);
-                });
-            } else {
-                // Mostrar mensaje de vacío
-                techEmpty.style.display = 'block';
-            }
-            
-            // Mostrar popup
-            techPopup.classList.add('visible');
-            techPopupVisible = true;
-            currentTechModule = moduleId;
-            
-            // Posicionar cerca del módulo
-            positionTechPopup(cardElement);
-        }
-
-        // 2. FUNCIÓN PARA POSICIONAR EL POPUP
-        function positionTechPopup(cardElement) {
-            if (!cardElement) return;
-            
-            const cardRect = cardElement.getBoundingClientRect();
-            const popupRect = techPopup.getBoundingClientRect();
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            
-            let left = cardRect.right + 20;
-            let top = cardRect.top;
-            
-            // Ajustar si no cabe a la derecha
-            if (left + popupRect.width > viewportWidth - 20) {
-                left = cardRect.left - popupRect.width - 20;
-            }
-            
-            // Ajustar verticalmente
-            if (top + popupRect.height > viewportHeight - 20) {
-                top = viewportHeight - popupRect.height - 20;
-            }
-            
-            // Mínimo top para no quedar debajo del header
-            if (top < 70) {
-                top = 70;
-            }
-            
-            techPopup.style.left = left + 'px';
-            techPopup.style.top = top + 'px';
-        }
-
-        // 3. FUNCIÓN PARA OCULTAR POPUP TÉCNICO
-        function hideTechPopup() {
-            techPopup.classList.remove('visible');
-            techPopupVisible = false;
-            currentTechModule = null;
-        }
-
-        // 4. FUNCIÓN PARA MARCAR MÓDULOS CON DATOS TÉCNICOS Y AGREGAR ICONO ⚙️
-        function markModulesWithTechData() {
-            Object.keys(MODULE_TECH_DATA).forEach(moduleId => {
-                const card = document.getElementById(moduleId);
-                if (card) {
-                    // Crear icono de engranaje
-                    const gearIcon = document.createElement('i');
-                    gearIcon.className = 'fa-solid fa-gear card-tech-icon';
-                    gearIcon.title = 'Ver especificaciones técnicas YML';
-                    
-                    // Evento para mostrar popup técnico al hacer clic en el icono
-                    gearIcon.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Evita que el clic se propague a la tarjeta
-                        showTechPopup(moduleId, card);
-                    });
-                    
-                    card.appendChild(gearIcon);
+                let statusClass = '';
+                let statusText = 'Pendiente';
+                
+                if (conn.status === 'completado') {
+                    statusClass = 'completed';
+                    statusText = '✓ Completado';
+                } else if (conn.status === 'activo') {
+                    statusClass = 'active';
+                    statusText = '⏳ Activo';
                 }
+                
+                node.innerHTML = `
+                    <div class="module-circle ${statusClass}">
+                        ${conn.status === 'completado' ? '<i class="fas fa-check"></i>' : (index + 1)}
+                    </div>
+                    <div class="module-label">${conn.name}</div>
+                    <div class="module-status">${statusText}</div>
+                `;
+                
+                modulesTrack.appendChild(node);
             });
-        }
-
-        // 5. EVENT LISTENERS PARA EL POPUP TÉCNICO
-        techClose.addEventListener('click', hideTechPopup);
-
-        // Cerrar popup técnico al hacer click fuera
-        document.addEventListener('click', (e) => {
-            if (techPopupVisible && 
-                !techPopup.contains(e.target) && 
-                !e.target.closest('.card-tech-icon')) {
-                hideTechPopup();
-            }
-        });
-
-        // 6. INTEGRACIÓN CON resetLayout
-        const originalResetLayout = resetLayout;
-        resetLayout = function() {
-            originalResetLayout();
-            hideTechPopup();
-        };
-
-        // 7. INTEGRACIÓN CON cambio de modo explicativo
-        const originalToggleExplainMode = toggleExplainMode;
-        toggleExplainMode = function() {
-            originalToggleExplainMode();
-            hideTechPopup(); // Ocultar popup técnico al cambiar a modo explicativo
-        };
-
-        // 8. INTEGRACIÓN CON tour
-        const originalStopTour = window.stopTour;
-        window.stopTour = function() {
-            originalStopTour();
-            hideTechPopup();
-        };
-
-        // 9. REDIBUJAR LÍNEAS CUANDO SE MUESTRA POPUP TÉCNICO
-        const originalDrawLines = drawLines;
-        drawLines = function() {
-            originalDrawLines();
             
-            // Reposicionar popup técnico si está visible
-            if (techPopupVisible && currentTechModule) {
-                const card = document.getElementById(currentTechModule);
-                if (card) {
-                    positionTechPopup(card);
-                }
-            }
-        };
-
-        // 10. INTEGRACIÓN CON WINDOW RESIZE
-        window.addEventListener('resize', () => {
-            if (techPopupVisible && currentTechModule) {
-                const card = document.getElementById(currentTechModule);
-                if (card) {
-                    positionTechPopup(card);
-                }	
-            }
-        });
-
-        // 11. INICIALIZACIÓN AL CARGAR LA PÁGINA
-        window.addEventListener('DOMContentLoaded', () => {
-            // Esperar a que todo esté cargado
+            // Actualizar progreso de módulos
             setTimeout(() => {
-                markModulesWithTechData();
+                const completedCount = connections.filter(c => c.status === 'completado').length;
+                const totalCount = connections.length;
+                const progress = (completedCount / totalCount) * 100;
+                document.getElementById('modulesProgress').style.width = `${progress}%`;
             }, 100);
+        }
+
+        function updateModulesChips(modules) {
+            const modulesContainer = document.getElementById('modulesContainer');
+            modulesContainer.innerHTML = '';
+            
+            modules.forEach(module => {
+                const chip = document.createElement('div');
+                chip.className = 'module-chip';
+                chip.title = module.desc;
+                chip.innerHTML = `
+                    <i class="${module.icon}"></i>
+                    <span>${module.name}</span>
+                `;
+                modulesContainer.appendChild(chip);
+            });
+        }
+
+        function updateDocuments(documents) {
+            const documentsContainer = document.getElementById('documentsContainer');
+            documentsContainer.innerHTML = '';
+            
+            documents.forEach(doc => {
+                const item = document.createElement('div');
+                item.className = 'doc-item';
+                item.innerHTML = `
+                    <div class="doc-icon">
+                        <i class="${doc.icon}"></i>
+                    </div>
+                    <div class="doc-name">${doc.name}</div>
+                    <div class="doc-status">${doc.status}</div>
+                `;
+                documentsContainer.appendChild(item);
+            });
+        }
+
+        function simulateCVUpload() {
+            // Ocultar área de upload
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.style.display = 'none';
+            
+            // Mostrar datos extraídos
+            const dataExtracted = document.getElementById('dataExtracted');
+            setTimeout(() => {
+                dataExtracted.style.display = 'block';
+                dataExtracted.classList.add('fade-in');
+                
+                // Avanzar a etapa 4 (Análisis CV)
+                setTimeout(() => {
+                    setStage(4);
+                    
+                    // Iniciar animación automática
+                    startAutoAdvance();
+                }, 1000);
+            }, 800);
+        }
+
+        function startAutoAdvance() {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+            
+            animationInterval = setInterval(() => {
+                if (currentStage < totalStages) {
+                    setStage(currentStage + 1);
+                } else {
+                    clearInterval(animationInterval);
+                    // Regresar al inicio después de 3 segundos
+                    setTimeout(() => {
+                        setStage(1);
+                        startAutoAdvance();
+                    }, 3000);
+                }
+            }, 3000);
+        }
+
+        function stopAutoAdvance() {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+        }
+
+        function resetFlow() {
+            stopAutoAdvance();
+            
+            // Mostrar área de upload
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.style.display = 'flex';
+            
+            // Ocultar datos extraídos
+            const dataExtracted = document.getElementById('dataExtracted');
+            dataExtracted.style.display = 'none';
+            
+            // Regresar a etapa 1
+            setStage(1);
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar con etapa 1
+            setStage(1);
+            
+            // Timeline principal clicks
+            const steps = document.querySelectorAll('.flow-step');
+            steps.forEach(step => {
+                step.addEventListener('click', () => {
+                    const stepNumber = parseInt(step.dataset.step);
+                    stopAutoAdvance();
+                    setStage(stepNumber);
+                });
+            });
+            
+            // Botones de control
+            document.getElementById('uploadArea').addEventListener('click', simulateCVUpload);
+            document.getElementById('simulateBtn').addEventListener('click', simulateCVUpload);
+            document.getElementById('resetBtn').addEventListener('click', resetFlow);
+            
+            // Drag and drop para CV
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary)';
+                uploadArea.style.background = 'var(--primary-bg)';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = 'var(--gray-light)';
+                uploadArea.style.background = 'transparent';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--gray-light)';
+                uploadArea.style.background = 'transparent';
+                simulateCVUpload();
+            });
         });
     </script>
 </body>
