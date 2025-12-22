@@ -196,7 +196,7 @@
             box-shadow: var(--shadow-primary);
             border: 2px solid var(--primary);
             position: relative;
-            overflow: hidden;
+            /* overflow: hidden;  <-- ELIMINADO para permitir que el popup flote fuera si es necesario */
         }
 
         .flow-header {
@@ -660,98 +660,82 @@
             border-top: 1px solid var(--gray-light);
         }
 
-        /* ===== POPUP DE INFORMACIÓN DE ETAPAS (LEGIBLE EN MODO OSCURO) ===== */
-        .info-popup-overlay {
+        /* ==========================================================================
+           NUEVO ESTILO PARA EL POPUP TÉCNICO FLOTANTE (REEMPLAZA AL MODAL)
+           ==========================================================================
+        */
+        #techPopup {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .info-popup {
+            z-index: 10000;
+            width: 280px;
             background: white;
             border-radius: 12px;
-            padding: 25px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            border-top: 4px solid var(--primary);
-            position: relative;
-            animation: slideUp 0.4s ease;
-            transform-origin: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            padding: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px) scale(0.95);
+            transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.165, 0.84, 0.44, 1), visibility 0.2s;
+            border-left: 4px solid var(--primary);
+            pointer-events: none; /* Inicialmente no interactuable hasta que sea visible */
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(30px) scale(0.95); opacity: 0; }
-            to { transform: translateY(0) scale(1); opacity: 1; }
+        #techPopup.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
         }
 
-        .popup-header {
+        .tech-header {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--gray-lighter);
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--gray-lighter);
+            align-items: center;
+            background: #FAFAFA;
+            border-radius: 12px 12px 0 0;
         }
 
-        .popup-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
+        .tech-title {
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .popup-title i {
-            font-size: 1.2rem;
-        }
-
-        .popup-close {
-            background: var(--gray-lighter);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+        .tech-close {
+            cursor: pointer;
+            color: var(--gray);
+            font-size: 1rem;
+            transition: color 0.2s;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            font-size: 1.2rem;
+            border-radius: 50%;
+        }
+
+        .tech-close:hover {
+            color: var(--primary);
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .tech-body {
+            padding: 15px;
+            font-size: 0.8rem;
             color: var(--gray);
-            transition: all 0.2s ease;
+            line-height: 1.5;
         }
 
-        .popup-close:hover {
-            background: var(--primary);
-            color: white;
-            transform: rotate(90deg);
-        }
-
-        .popup-content {
-            font-size: 0.95rem;
-            line-height: 1.6;
+        .tech-body b {
             color: var(--dark);
-            padding: 10px 0;
         }
 
-        .popup-content::before {
-            content: "💡";
-            display: block;
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            opacity: 0.8;
-        }
-
-        /* Botón de información en cada etapa */
+        /* Botón de información en cada etapa (EL TRIGGER) */
         .step-info-btn {
             position: absolute;
             top: 5px;
@@ -791,7 +775,7 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
 
-        /* ===== ESTILOS PARA MODO OSCURO (CON POPUP LEGIBLE) ===== */
+        /* ===== ESTILOS PARA MODO OSCURO ===== */
         body.dark-mode {
             background: #0F172A;
             color: #E2E8F0;
@@ -877,34 +861,6 @@
             color: #CBD5E1;
         }
 
-        /* POPUP MEJORADO PARA MODO OSCURO - ALTO CONTRASTE */
-        body.dark-mode .info-popup {
-            background: #0F172A; /* Fondo mucho más oscuro */
-            color: #F8FAFC; /* Texto casi blanco para máximo contraste */
-            border-color: var(--primary);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        }
-        body.dark-mode .popup-header {
-            border-bottom-color: #334155;
-        }
-        body.dark-mode .popup-title {
-            color: #F87171; /* Usa primary-light para el título */
-        }
-        body.dark-mode .popup-content {
-            color: #E2E8F0; /* Gris muy claro para el párrafo */
-        }
-        body.dark-mode .popup-content::before {
-            opacity: 1;
-        }
-        body.dark-mode .popup-close {
-            background: #334155;
-            color: #CBD5E1;
-        }
-        body.dark-mode .popup-close:hover {
-            background: var(--primary);
-            color: white;
-        }
-
         body.dark-mode .module-circle {
             background: #475569;
         }
@@ -915,6 +871,32 @@
 
         body.dark-mode .module-circle.active {
             background: var(--info);
+        }
+        
+        /* ESTILOS ESPECÍFICOS DEL POPUP TÉCNICO EN MODO OSCURO */
+        body.dark-mode #techPopup {
+            background: #1E293B;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border-left-color: #F87171;
+            border: 1px solid #334155;
+            border-left: 4px solid #F87171;
+        }
+        
+        body.dark-mode .tech-header {
+            background: #0F172A;
+            border-bottom-color: #334155;
+        }
+        
+        body.dark-mode .tech-title {
+            color: #F87171;
+        }
+        
+        body.dark-mode .tech-body {
+            color: #CBD5E1;
+        }
+        
+        body.dark-mode .tech-body b {
+            color: white;
         }
 
         /* ===== ANIMACIONES ===== */
@@ -1023,7 +1005,6 @@
     </style>
 </head>
 <body>
-    <!-- HEADER -->
     <div class="header">
         <div class="logo">
             <div class="logo-icon">
@@ -1058,7 +1039,6 @@
         </div>
     </div>
 
-    <!-- FLUJO PRINCIPAL (INTERACTIVO - DESTACADO) -->
     <div class="main-flow">
         <div class="flow-header">
             <div class="flow-title">
@@ -1073,49 +1053,49 @@
             <div class="flow-progress" id="mainFlowProgress"></div>
             
             <div class="flow-step active" data-step="1">
-                <button class="step-info-btn" data-stage="1">i</button>
+                <button class="step-info-btn" data-stage="1" aria-label="Información Solicitud">i</button>
                 <div class="step-circle">1</div>
                 <div class="step-label">Solicitud</div>
                 <div class="step-time" id="timeStep1">2-3 días</div>
                 <div class="step-status">Activo</div>
             </div>
             <div class="flow-step" data-step="2">
-                <button class="step-info-btn" data-stage="2">i</button>
+                <button class="step-info-btn" data-stage="2" aria-label="Información Vacante">i</button>
                 <div class="step-circle">2</div>
                 <div class="step-label">Vacante</div>
                 <div class="step-time" id="timeStep2">1-2 días</div>
                 <div class="step-status">Pendiente</div>
             </div>
             <div class="flow-step" data-step="3">
-                <button class="step-info-btn" data-stage="3">i</button>
+                <button class="step-info-btn" data-stage="3" aria-label="Información Búsqueda">i</button>
                 <div class="step-circle">3</div>
                 <div class="step-label">Búsqueda</div>
                 <div class="step-time" id="timeStep3">5-8 días</div>
                 <div class="step-status">Pendiente</div>
             </div>
             <div class="flow-step" data-step="4">
-                <button class="step-info-btn" data-stage="4">i</button>
+                <button class="step-info-btn" data-stage="4" aria-label="Información Análisis">i</button>
                 <div class="step-circle">4</div>
                 <div class="step-label">Análisis</div>
                 <div class="step-time" id="timeStep4">3-5 días</div>
                 <div class="step-status">Pendiente</div>
             </div>
             <div class="flow-step" data-step="5">
-                <button class="step-info-btn" data-stage="5">i</button>
+                <button class="step-info-btn" data-stage="5" aria-label="Información Selección">i</button>
                 <div class="step-circle">5</div>
                 <div class="step-label">Selección</div>
                 <div class="step-time" id="timeStep5">8-11 días</div>
                 <div class="step-status">Pendiente</div>
             </div>
             <div class="flow-step" data-step="6">
-                <button class="step-info-btn" data-stage="6">i</button>
+                <button class="step-info-btn" data-stage="6" aria-label="Información Contrato">i</button>
                 <div class="step-circle">6</div>
                 <div class="step-label">Contrato</div>
                 <div class="step-time" id="timeStep6">3-5 días</div>
                 <div class="step-status">Pendiente</div>
             </div>
             <div class="flow-step" data-step="7">
-                <button class="step-info-btn" data-stage="7">i</button>
+                <button class="step-info-btn" data-stage="7" aria-label="Información Alta">i</button>
                 <div class="step-circle">7</div>
                 <div class="step-label">Alta</div>
                 <div class="step-time" id="timeStep7">1-2 días</div>
@@ -1124,7 +1104,6 @@
         </div>
     </div>
 
-    <!-- FLUJO SECUNDARIO (MÓDULOS/CONEXIONES - SUTIL) -->
     <div class="modules-flow">
         <div class="modules-header">
             <div class="modules-title">
@@ -1135,13 +1114,10 @@
         </div>
         
         <div class="modules-track" id="modulesTrack">
-            <!-- Módulos dinámicos se generarán aquí -->
-        </div>
+            </div>
     </div>
 
-    <!-- PANEL PRINCIPAL -->
     <div class="main-panel">
-        <!-- COLUMNA IZQUIERDA: CV PARSER -->
         <div class="panel-section">
             <div class="section-title">
                 <i class="fas fa-file-import"></i>
@@ -1181,7 +1157,6 @@
             </div>
         </div>
 
-        <!-- COLUMNA DERECHA: MÓDULOS Y DOCUMENTOS -->
         <div class="panel-section">
             <div class="section-title">
                 <i class="fas fa-cubes"></i>
@@ -1189,8 +1164,7 @@
             </div>
             
             <div class="modules-chips" id="modulesContainer">
-                <!-- Módulos dinámicos se generarán aquí -->
-            </div>
+                </div>
             
             <div class="section-title">
                 <i class="fas fa-folder"></i>
@@ -1198,14 +1172,25 @@
             </div>
             
             <div class="documents-mini" id="documentsContainer">
-                <!-- Documentos dinámicos se generarán aquí -->
-            </div>
+                </div>
         </div>
     </div>
 
-    <!-- FOOTER -->
     <div class="footer">
         <p>Flujo automatizado de reclutamiento • Integración con Genius AI • Rankmi Full Suite</p>
+    </div>
+
+    <div id="techPopup">
+        <div class="tech-header">
+            <div class="tech-title">
+                <i class="fas fa-info-circle"></i>
+                <span id="techTitle">Título Etapa</span>
+            </div>
+            <div class="tech-close" onclick="hideTechPopup()">&times;</div>
+        </div>
+        <div class="tech-body" id="techBody">
+            Contenido técnico...
+        </div>
     </div>
 
     <script>
@@ -1342,6 +1327,17 @@
                     { name: "Onboarding", icon: "fas fa-road", status: "⏳ En curso" }
                 ]
             }
+        };
+
+        // ===== DESCRIPCIONES DE ETAPAS =====
+        const stageDescriptions = {
+            1: "El líder identifica una <b>'silla vacía'</b> en su organigrama y solicita la vacante con un solo clic. Sin formularios manuales, el sistema ya conoce el cargo y los requisitos a detalle.",
+            2: "La vacante se crea y publica automáticamente heredando los datos del presupuesto aprobado. Se conecta con el organigrama para asegurar la trazabilidad.",
+            3: "El <b>ATS</b> trabaja de forma autónoma para atraer talento. Se inicia la difusión en portales y la recepción de candidatos eliminando la burocracia inicial.",
+            4: "Filtro inteligente. <b>Genius AI</b> analiza los perfiles para asegurar que coincidan con la renta y requisitos precargados en la plantilla del cargo.",
+            5: "Gestión integral de entrevistas y evaluaciones psicométricas. Los líderes pueden dar feedback inmediato dentro de la plataforma tras cada entrevista.",
+            6: "Generación y firma de <b>Carta Oferta Digital</b>. Al firmar, el contrato se archiva automáticamente en Gestión Documental.",
+            7: "Magia de cierre. Se crea el acceso a la plataforma y la <b>Ficha Maestra</b> del colaborador con datos de renta y cargo ya precargados."
         };
 
         // ===== ELEMENTOS DOM =====
@@ -1547,7 +1543,7 @@
             updateTimeIndicators(1);
         }
 
-        // ===== NUEVAS FUNCIONALIDADES =====
+        // ===== FUNCIONALIDADES ADICIONALES =====
 
         // 1. BOTÓN DE PAUSAR/REANUDAR
         const pauseBtn = document.getElementById('pauseBtn');
@@ -1564,7 +1560,6 @@
                 pauseStartTime = Date.now();
                 isPaused = true;
                 
-                // Mostrar notificación
                 showNotification('Simulación pausada', 'info');
             } else {
                 // Reanudar
@@ -1576,7 +1571,6 @@
                 pauseBtn.classList.remove('btn-warning');
                 isPaused = false;
                 
-                // Mostrar notificación
                 showNotification('Simulación reanudada', 'success');
             }
         });
@@ -1584,7 +1578,6 @@
         // 2. MODO OSCURO
         const darkModeToggle = document.getElementById('darkModeToggle');
 
-        // Verificar preferencia guardada
         if (localStorage.getItem('darkMode') === 'enabled') {
             document.body.classList.add('dark-mode');
             darkModeToggle.checked = true;
@@ -1602,18 +1595,17 @@
             }
         });
 
-        // 3. TIEMPOS ESTIMADOS REALISTAS (50% más que la propuesta original)
+        // 3. TIEMPOS ESTIMADOS
         const stageTimes = {
-            1: { min: 2, max: 3, unit: 'días' },    // Solicitud
-            2: { min: 1, max: 2, unit: 'días' },     // Vacante
-            3: { min: 5, max: 8, unit: 'días' },     // Búsqueda
-            4: { min: 3, max: 5, unit: 'días' },     // Análisis
-            5: { min: 8, max: 11, unit: 'días' },    // Selección
-            6: { min: 3, max: 5, unit: 'días' },     // Contrato
-            7: { min: 1, max: 2, unit: 'días' }      // Alta
+            1: { min: 2, max: 3, unit: 'días' },
+            2: { min: 1, max: 2, unit: 'días' },
+            3: { min: 5, max: 8, unit: 'días' },
+            4: { min: 3, max: 5, unit: 'días' },
+            5: { min: 8, max: 11, unit: 'días' },
+            6: { min: 3, max: 5, unit: 'días' },
+            7: { min: 1, max: 2, unit: 'días' }
         };
 
-        // Función para actualizar tiempos dinámicamente
         function updateTimeIndicators(currentStage) {
             for (let i = 1; i <= 7; i++) {
                 const timeElement = document.getElementById(`timeStep${i}`);
@@ -1627,18 +1619,15 @@
                         timeText = `${time.min}-${time.max} ${time.unit}`;
                     }
                     
-                    // Si es la etapa actual, mostrar tiempo restante estimado
                     if (i === currentStage) {
                         const avgTime = (time.min + time.max) / 2;
                         timeElement.innerHTML = `<i class="fas fa-clock"></i> ${timeText}`;
                         timeElement.style.fontWeight = '700';
                     } else if (i < currentStage) {
-                        // Etapas completadas
                         timeElement.innerHTML = `<i class="fas fa-check-circle"></i> Completado`;
                         timeElement.style.color = 'var(--success)';
                         timeElement.style.background = 'var(--success-light)';
                     } else {
-                        // Etapas futuras
                         timeElement.textContent = timeText;
                         timeElement.style.color = 'var(--gray)';
                         timeElement.style.background = 'var(--gray-lighter)';
@@ -1649,7 +1638,6 @@
 
         // 4. NOTIFICACIONES TEMPORALES
         function showNotification(message, type = 'info') {
-            // Eliminar notificación anterior si existe
             const existingNotif = document.querySelector('.notification');
             if (existingNotif) existingNotif.remove();
             
@@ -1660,7 +1648,6 @@
                 <span>${message}</span>
             `;
             
-            // Estilos inline para la notificación
             notification.style.cssText = `
                 position: fixed;
                 top: 20px;
@@ -1681,76 +1668,81 @@
             
             document.body.appendChild(notification);
             
-            // Auto-eliminar después de 3 segundos
             setTimeout(() => {
                 notification.style.animation = 'slideOut 0.3s ease';
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
 
-        // 5. POPUP DE INFORMACIÓN DE ETAPAS (ACTIVADO POR mouseover)
-        const stageDescriptions = {
-            1: "El líder identifica una 'silla vacía' en su organigrama y solicita la vacante con un solo clic este pasa a etapas de aprobaciones. Sin formularios manuales, el sistema ya conoce el cargo y los requisitos a detalle.",
-            2: "La vacante se crea y publica automáticamente heredando los datos del presupuesto aprobado y la requisición. Se conecta directamente con el organigrama para asegurar la trazabilidad del área y solicitante.",
-            3: "El ATS trabaja de forma autónoma para atraer talento. Se inicia la difusión en portales y la recepción de candidatos eliminando la burocracia inicial.",
-            4: "Filtro inteligente de candidatos. Aquí Genius AI analiza los perfiles para asegurar que coincidan con la renta y requisitos precargados en una plantilla.",
-            5: "Gestión de entrevistas y evaluaciones psicométricas integradas, como también la comunicación con el candidato y automatización de mensajes en avance de etapas o descalificación en el proceso. Los líderes pueden dar feedback inmediato dentro de la plataforma.",
-            6: "Generación y firma de Carta Oferta Digital. En el instante que el candidato firma, el contrato se archiva automáticamente en Gestión Documental.",
-            7: "Magia de cierre automático. Se crea el acceso a la plataforma y la Ficha Maestra del colaborador con datos de renta y cargo ya precargados."
-        };
+        // ========================================================
+        // 5. NUEVO SISTEMA DE POPUP TÉCNICO MEJORADO (JavaScript)
+        // ========================================================
+        
+        const techPopup = document.getElementById('techPopup');
+        const techTitle = document.getElementById('techTitle');
+        const techBody = document.getElementById('techBody');
+        let popupTimer; // Para el delay al cerrar
 
-        // Crear popup HTML
-        const popupHTML = `
-            <div class="info-popup-overlay" id="stageInfoPopup">
-                <div class="info-popup">
-                    <div class="popup-header">
-                        <div class="popup-title">
-                            <i class="fas fa-info-circle"></i>
-                            <span id="popupStageTitle">Etapa 1 - Solicitud</span>
-                        </div>
-                        <button class="popup-close" id="closePopup">&times;</button>
-                    </div>
-                    <div class="popup-content" id="popupStageDescription">
-                        Cargando información...
-                    </div>
-                </div>
-            </div>
-        `;
+        function showTechPopup(target, stageNumber) {
+            // Limpiar timer de cierre si existe (el usuario volvió al elemento)
+            clearTimeout(popupTimer);
 
-        // Insertar popup en el body
-        document.body.insertAdjacentHTML('beforeend', popupHTML);
-
-        // Referencias a elementos del popup
-        const popupOverlay = document.getElementById('stageInfoPopup');
-        const popupTitle = document.getElementById('popupStageTitle');
-        const popupDescription = document.getElementById('popupStageDescription');
-        const closePopupBtn = document.getElementById('closePopup');
-
-        // Función para mostrar información de etapa
-        function showStageInfo(stageNumber) {
+            // 1. Llenar datos
             const stageName = stages[stageNumber].name;
             const description = stageDescriptions[stageNumber];
+            techTitle.textContent = `Etapa ${stageNumber} - ${stageName}`;
+            techBody.innerHTML = description;
+
+            // 2. Calcular Posición Inteligente
+            positionTechPopup(target);
+
+            // 3. Mostrar con animación suave
+            techPopup.classList.add('visible');
             
-            popupTitle.textContent = `Etapa ${stageNumber} - ${stageName}`;
-            popupDescription.textContent = description;
-            
-            popupOverlay.style.display = 'flex';
-            
-            // Pausar animación automática si está activa
+            // Pausar flujo automático mientras se lee
             stopAutoAdvance();
         }
 
-        // Función para cerrar popup
-        function closeStageInfo() {
-            popupOverlay.style.display = 'none';
+        function hideTechPopup() {
+            // Añadir pequeño delay (10ms) para permitir mover el mouse del icono al popup
+            popupTimer = setTimeout(() => {
+                techPopup.classList.remove('visible');
+            }, 10);
+        }
+        
+        function positionTechPopup(target) {
+            const rect = target.getBoundingClientRect();
+            const popupRect = techPopup.getBoundingClientRect();
+            const margin = 12; // Espacio entre icono y popup
+
+            // Posición por defecto: Centro horizontal respecto al icono, Arriba del icono
+            let top = rect.top - popupRect.height - margin;
+            let left = rect.left + (rect.width / 2) - (popupRect.width / 2);
+
+            // A. Ajuste Vertical: Si no cabe arriba, mostrar abajo
+            if (top < 10) {
+                top = rect.bottom + margin;
+                // Pequeño estilo visual para indicar que sale de abajo si quisieras flechas
+            }
+
+            // B. Ajuste Horizontal: Si se sale por la izquierda
+            if (left < 10) {
+                left = 10;
+            } 
+            // Si se sale por la derecha
+            else if (left + popupRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - popupRect.width - 10;
+            }
+
+            techPopup.style.top = `${top}px`;
+            techPopup.style.left = `${left}px`;
         }
 
-        // ===== EVENT LISTENERS =====
+        // EVENT LISTENERS MEJORADOS PARA EL POPUP
         document.addEventListener('DOMContentLoaded', () => {
-            // Inicializar con etapa 1
             setStage(1);
             
-            // Timeline principal clicks
+            // Click en línea de tiempo
             const steps = document.querySelectorAll('.flow-step');
             steps.forEach(step => {
                 step.addEventListener('click', () => {
@@ -1765,34 +1757,47 @@
             document.getElementById('simulateBtn').addEventListener('click', simulateCVUpload);
             document.getElementById('resetBtn').addEventListener('click', resetFlow);
             
-            // **CORRECCIÓN 1: Botones 'i' activados por mouseover (pasar el ratón)**
+            // LISTENERS DEL ICONO DE INFORMACIÓN (HOVER)
             const infoButtons = document.querySelectorAll('.step-info-btn');
+            
             infoButtons.forEach(button => {
-                button.addEventListener('mouseover', (e) => {
-                    e.stopPropagation(); // Evitar conflicto con el click de la etapa
+                // Entrada del mouse: Mostrar
+                button.addEventListener('mouseenter', (e) => {
                     const stageNumber = parseInt(button.dataset.stage);
-                    showStageInfo(stageNumber);
+                    showTechPopup(button, stageNumber);
+                });
+                
+                // Salida del mouse: Intentar cerrar (con delay)
+                button.addEventListener('mouseleave', () => {
+                    hideTechPopup();
                 });
             });
-            
-            // Cerrar popup al hacer clic en la X
-            closePopupBtn.addEventListener('click', closeStageInfo);
-            
-            // Cerrar popup al hacer clic fuera del contenido
-            popupOverlay.addEventListener('click', (e) => {
-                if (e.target === popupOverlay) {
-                    closeStageInfo();
-                }
+
+            // LOGICA DE IMÁN: Si el usuario mueve el mouse SOBRE el popup, no cerrarlo
+            techPopup.addEventListener('mouseenter', () => {
+                clearTimeout(popupTimer); // Cancelar cierre
             });
-            
-            // Cerrar popup con tecla ESC
+
+            // Si saca el mouse del popup, cerrar
+            techPopup.addEventListener('mouseleave', () => {
+                hideTechPopup();
+            });
+
+            // CERRAR CON ESC
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && popupOverlay.style.display === 'flex') {
-                    closeStageInfo();
+                if (e.key === 'Escape') {
+                    techPopup.classList.remove('visible');
                 }
             });
             
-            // Drag and drop para CV
+            // CERRAR CLICK FUERA (Opcional, ya que hover lo maneja, pero bueno para UX móvil)
+            document.addEventListener('click', (e) => {
+                if (!techPopup.contains(e.target) && !e.target.classList.contains('step-info-btn')) {
+                     techPopup.classList.remove('visible');
+                }
+            });
+
+            // Drag and drop events
             const uploadArea = document.getElementById('uploadArea');
             uploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
