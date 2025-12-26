@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATS Rankmi - Flujo de Reclutamiento</title>
+    <meta name="author" content="Emmanuel David Nahin López">
+    <title>ATS Rankmi - Flujo de Reclutamiento Inteligente</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* ===== ESTILOS PRINCIPALES ===== */
+        /* ===== VARIABLES CSS GLOBALES ===== */
         :root {
             --primary: #DC2626;
             --primary-light: #F87171;
@@ -25,178 +26,235 @@
             --border-radius: 8px;
             --shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             --shadow-primary: 0 4px 12px rgba(220, 38, 38, 0.1);
+            
+            /* Variables para temas */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
         }
 
+        /* ===== ESTILOS HEADER DONANTE MODIFICADO ===== */
+        #bg-canvas { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1; 
+            pointer-events: none; 
+        }
+
+        body {
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--bg-color); 
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh; 
+            width: 100%; 
+            font-size: 14px; 
+            user-select: none; 
+            transition: background-color 0.6s ease, color 0.6s ease;
+            padding: 8px;
+            max-width: 1200px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        /* HEADER REDISEÑADO - ESTILO SAAS MODERNO */
+        header {
+            height: 64px;
+            padding: 0 24px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100001;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* Identidad / Breadcrumb Style */
+        .header-identity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 180px;
+            flex-shrink: 0;
+        }
+
+        .brand-marker {
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, #dc2626 0%, #f87171 100%);
+            border-radius: 2px;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .brand-text .title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: 0.3px;
+        }
+
+        .brand-text .subtitle {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* OPTIMIZACIÓN DE ESPACIOS - HEADER TOOLS */
+        .header-tools {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-width: max-content;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding-right: 4px;
+            border-right: 1px solid #e2e8f0;
+            height: 32px;
+        }
+
+        .tool-group:last-child {
+            border-right: none;
+            padding-right: 0;
+        }
+
+        /* Botones de icono (Ghost Buttons) */
+        .btn-tool {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .btn-tool:hover {
+            background: #f8fafc;
+            color: #475569;
+            border-color: #e2e8f0;
+        }
+
+        .btn-tool.active { 
+            background: #eff6ff;
+            color: #2563eb;
+            border-color: #bfdbfe;
+        }
+
+        .btn-tool.active#btn-mode-draw {
+            background: #fef3c7;
+            color: #d97706;
+            border-color: #fde68a;
+        }
+
+        .btn-tool.active#btn-mode-text {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+        }
+
+        /* Botón de reset (con ícono) */
+        #btn-reset {
+            color: #dc2626;
+        }
+
+        #btn-reset:hover {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        /* Configuración global (idioma, tema, reloj) */
+        .config-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-left: 4px;
+        }
+
+        .btn-config {
+            width: auto;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.75rem;
+            padding: 0 6px;
+            min-width: 60px;
+        }
+
+        .btn-config:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        #btn-theme {
+            font-size: 0.75rem;
+        }
+
+        .clock-display {
+            font-family: 'Inter', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #334155;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0 8px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            min-width: 85px;
+            justify-content: center;
+        }
+
+        /* ===== ESTILOS PRINCIPALES DEL ATS ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f8fafc;
-            color: var(--dark);
-            padding: 8px; /* REDUCIDO de 12px */
-            max-width: 1200px;
-            margin: 0 auto;
-            line-height: 1.4;
-        }
-
-        /* ===== HEADER COMPACTO ===== */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px; /* REDUCIDO de 15px */
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--gray-light);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--primary);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .logo-text h1 {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .logo-text p {
-            font-size: 0.7rem;
-            color: var(--gray);
-        }
-
-        /* ===== CONTROLES ===== */
-        .controls {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 6px 12px;
-            background: white;
-            border: 1px solid var(--gray-light);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s ease;
-        }
-
-        .btn:hover {
-            background: var(--light);
-            transform: translateY(-1px);
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-light);
-        }
-
-        .btn-warning {
-            background: #F59E0B;
-            color: white;
-            border-color: #F59E0B;
-        }
-
-        .btn-warning:hover {
-            background: #D97706;
-            transform: translateY(-1px);
-        }
-
-        /* ===== INTERRUPTOR MODO OSCURO ===== */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: 8px;
-        }
-
-        .toggle-text {
-            font-size: 0.7rem;
-            color: var(--gray);
-            font-weight: 600;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 46px;
-            height: 24px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--gray);
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background: white;
-            transition: .4s;
-            border-radius: 50%;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-
-        input:checked + .toggle-slider {
-            background: var(--primary);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(22px);
-        }
-
         /* ===== FLUJO PRINCIPAL DESTACADO ===== */
         .main-flow {
             background: white;
             border-radius: var(--border-radius);
-            padding: 12px; /* REDUCIDO de 15px */
-            margin-bottom: 10px; /* REDUCIDO de 15px */
+            padding: 12px;
+            margin-bottom: 10px;
             box-shadow: var(--shadow-primary);
             border: 2px solid var(--primary);
             position: relative;
-            /* overflow: hidden;  <-- ELIMINADO para permitir que el popup flote fuera si es necesario */
         }
 
         .flow-header {
@@ -348,8 +406,8 @@
         .modules-flow {
             background: white;
             border-radius: var(--border-radius);
-            padding: 12px; /* REDUCIDO de 15px */
-            margin-bottom: 10px; /* REDUCIDO de 15px */
+            padding: 12px;
+            margin-bottom: 10px;
             box-shadow: var(--shadow);
             border: 1px solid var(--gray-light);
         }
@@ -476,12 +534,12 @@
         .main-panel {
             background: white;
             border-radius: var(--border-radius);
-            padding: 12px; /* REDUCIDO de 15px */
-            margin-bottom: 10px; /* REDUCIDO de 15px */
+            padding: 12px;
+            margin-bottom: 10px;
             box-shadow: var(--shadow);
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px; /* REDUCIDO de 15px */
+            gap: 10px;
             min-height: 300px;
         }
 
@@ -494,7 +552,7 @@
             font-size: 0.8rem;
             font-weight: 600;
             color: var(--dark);
-            margin-bottom: 8px; /* REDUCIDO de 12px */
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -513,7 +571,7 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 10px; /* REDUCIDO de 15px */
+            margin-bottom: 10px;
         }
 
         .upload-mini:hover {
@@ -574,8 +632,8 @@
         .modules-chips {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 6px; /* REDUCIDO de 8px */
-            margin-bottom: 10px; /* REDUCIDO de 15px */
+            gap: 6px;
+            margin-bottom: 10px;
         }
 
         .module-chip {
@@ -607,8 +665,8 @@
         .documents-mini {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 6px; /* REDUCIDO de 8px */
-            margin-top: 8px; /* REDUCIDO de 10px */
+            gap: 6px;
+            margin-top: 8px;
         }
 
         .doc-item {
@@ -655,15 +713,12 @@
             text-align: center;
             color: var(--gray);
             font-size: 0.7rem;
-            padding: 8px; /* REDUCIDO de 12px */
-            margin-top: 8px; /* REDUCIDO de 10px */
+            padding: 8px;
+            margin-top: 8px;
             border-top: 1px solid var(--gray-light);
         }
 
-        /* ==========================================================================
-           NUEVO ESTILO PARA EL POPUP TÉCNICO FLOTANTE (REEMPLAZA AL MODAL)
-           ==========================================================================
-        */
+        /* ===== POPUP TÉCNICO FLOTANTE ===== */
         #techPopup {
             position: fixed;
             z-index: 10000;
@@ -677,7 +732,7 @@
             transform: translateY(10px) scale(0.95);
             transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.165, 0.84, 0.44, 1), visibility 0.2s;
             border-left: 4px solid var(--primary);
-            pointer-events: none; /* Inicialmente no interactuable hasta que sea visible */
+            pointer-events: none;
         }
 
         #techPopup.visible {
@@ -735,7 +790,7 @@
             color: var(--dark);
         }
 
-        /* Botón de información en cada etapa (EL TRIGGER) */
+        /* Botón de información en cada etapa */
         .step-info-btn {
             position: absolute;
             top: 5px;
@@ -781,21 +836,11 @@
             color: #E2E8F0;
         }
 
-        body.dark-mode .header {
-            border-bottom-color: #334155;
-        }
-
         body.dark-mode .main-flow,
         body.dark-mode .modules-flow,
         body.dark-mode .main-panel {
             background: #1E293B;
             border-color: #334155;
-            color: #E2E8F0;
-        }
-
-        body.dark-mode .btn:not(.btn-primary):not(.btn-warning) {
-            background: #334155;
-            border-color: #475569;
             color: #E2E8F0;
         }
 
@@ -857,10 +902,6 @@
             border-color: #047857;
         }
 
-        body.dark-mode .toggle-text {
-            color: #CBD5E1;
-        }
-
         body.dark-mode .module-circle {
             background: #475569;
         }
@@ -918,6 +959,264 @@
             animation: pulse 2s infinite;
         }
 
+        /* ===== CAPAS DE DIBUJO Y TEXTO ===== */
+        #layer-draw, #layer-text { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 99900; 
+            pointer-events: none; 
+        }
+        
+        body.mode-draw #layer-draw { 
+            pointer-events: auto; 
+            cursor: crosshair; 
+        }
+        
+        body.mode-text #layer-text { 
+            pointer-events: auto; 
+            cursor: text; 
+            background: rgba(255,255,255,0.1); 
+        }
+
+        /* ===== ESTILOS PARA TEMAS (ESTACIONES) ===== */
+        /* OTOÑO */
+        body.mode-autumn { 
+            background-color: #ffedd5 !important; 
+            color: #431407; 
+        }
+        
+        body.mode-autumn .main-flow,
+        body.mode-autumn .modules-flow,
+        body.mode-autumn .main-panel {
+            background: #fff7ed !important;
+            border-color: #fdba74 !important;
+            color: #431407 !important;
+        }
+        
+        body.mode-autumn .step-circle {
+            background: #fff7ed !important;
+            border-color: #fdba74 !important;
+            color: #431407 !important;
+        }
+        
+        body.mode-autumn .flow-step.active .step-circle {
+            background: #ea580c !important;
+            border-color: #ea580c !important;
+            color: white !important;
+        }
+        
+        body.mode-autumn .module-chip {
+            background: #ffedd5 !important;
+            border-left-color: #ea580c !important;
+        }
+        
+        body.mode-autumn .flow-progress {
+            background: linear-gradient(90deg, #ea580c, #f97316) !important;
+        }
+
+        /* INVIERNO */
+        body.mode-winter { 
+            background-color: #0f172a !important; 
+            color: #e2e8f0; 
+        }
+        
+        body.mode-winter .main-flow,
+        body.mode-winter .modules-flow,
+        body.mode-winter .main-panel {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #e2e8f0 !important;
+        }
+        
+        body.mode-winter .step-circle {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #e2e8f0 !important;
+        }
+        
+        body.mode-winter .flow-step.active .step-circle {
+            background: #60a5fa !important;
+            border-color: #60a5fa !important;
+            color: white !important;
+        }
+        
+        body.mode-winter .module-chip {
+            background: #1e293b !important;
+            border-left-color: #60a5fa !important;
+        }
+        
+        body.mode-winter .flow-progress {
+            background: linear-gradient(90deg, #60a5fa, #3b82f6) !important;
+        }
+
+        /* PRIMAVERA */
+        body.mode-spring { 
+            background-color: #dcfce7 !important; 
+            color: #064e3b; 
+        }
+        
+        body.mode-spring .main-flow,
+        body.mode-spring .modules-flow,
+        body.mode-spring .main-panel {
+            background: #f0fdf4 !important;
+            border-color: #86efac !important;
+            color: #064e3b !important;
+        }
+        
+        body.mode-spring .step-circle {
+            background: #f0fdf4 !important;
+            border-color: #86efac !important;
+            color: #064e3b !important;
+        }
+        
+        body.mode-spring .flow-step.active .step-circle {
+            background: #16a34a !important;
+            border-color: #16a34a !important;
+            color: white !important;
+        }
+        
+        body.mode-spring .module-chip {
+            background: #dcfce7 !important;
+            border-left-color: #16a34a !important;
+        }
+        
+        body.mode-spring .flow-progress {
+            background: linear-gradient(90deg, #16a34a, #22c55e) !important;
+        }
+
+        /* ===== AYUDA INTERACTIVA COMPACTA ===== */
+        .help-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 100002;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .help-modal {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .help-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--gray-lighter);
+        }
+
+        .help-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .help-close {
+            cursor: pointer;
+            color: var(--gray);
+            font-size: 1.1rem;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .help-close:hover {
+            background: var(--gray-lighter);
+            color: var(--primary);
+        }
+
+        .help-content {
+            font-size: 0.8rem;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .help-item {
+            margin-bottom: 8px;
+            padding: 8px;
+            background: var(--gray-lighter);
+            border-radius: 5px;
+            border-left: 3px solid var(--info);
+        }
+
+        .help-item strong {
+            color: var(--primary);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.75rem;
+        }
+
+        .help-tip {
+            background: var(--primary-bg);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: var(--primary);
+            border: 1px solid var(--primary-light);
+        }
+
+        /* ===== NOTAS DE TEXTO ===== */
+        .note-input {
+            position: absolute;
+            background: white;
+            border: 2px solid var(--info);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            min-width: 180px;
+            max-width: 250px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            z-index: 100000;
+            outline: none;
+        }
+
+        .note-item {
+            position: absolute;
+            background: var(--info-light);
+            border: 1px solid var(--info);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            max-width: 220px;
+            word-break: break-word;
+            cursor: move;
+            z-index: 99999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+        .note-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .main-panel {
@@ -948,24 +1247,34 @@
                 font-size: 0.65rem;
             }
             
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+            header {
+                padding: 0 12px;
+                gap: 6px;
+                height: 56px;
             }
             
-            .controls {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
+            .header-identity {
+                min-width: 140px;
             }
             
-            .toggle-container {
-                margin-left: 0;
-                margin-top: 8px;
-                order: 3;
-                width: 100%;
-                justify-content: center;
+            .brand-text .title {
+                font-size: 0.75rem;
+            }
+            
+            .brand-text .subtitle {
+                font-size: 0.6rem;
+            }
+            
+            .btn-config {
+                padding: 0 4px;
+                min-width: 50px;
+                font-size: 0.7rem;
+            }
+            
+            .clock-display {
+                font-size: 0.7rem;
+                min-width: 75px;
+                padding: 0 6px;
             }
         }
 
@@ -1001,44 +1310,141 @@
                 height: 24px;
                 font-size: 0.7rem;
             }
+            
+            .header-tools {
+                gap: 2px;
+            }
+            
+            .tool-group {
+                gap: 1px;
+            }
+            
+            .btn-tool {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .btn-config {
+                height: 28px;
+                font-size: 0.65rem;
+                min-width: 45px;
+            }
+            
+            .clock-display {
+                height: 28px;
+                font-size: 0.65rem;
+                min-width: 65px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">
-            <div class="logo-icon">
-                <i class="fas fa-user-plus"></i>
+    <!-- Canvas de fondo animado -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Ayuda interactiva -->
+    <div class="help-overlay" id="helpOverlay">
+        <div class="help-modal">
+            <div class="help-header">
+                <div class="help-title">
+                    <i class="fas fa-circle-question"></i>
+                    Guía Interactiva del ATS
+                </div>
+                <div class="help-close" id="helpClose">&times;</div>
             </div>
-            <div class="logo-text">
-                <h1>ATS Rankmi</h1>
-                <p>Flujo de Reclutamiento Inteligente</p>
-            </div>
-        </div>
-        <div class="controls">
-            <button class="btn" id="pauseBtn">
-                <i class="fas fa-pause"></i>
-                <span class="btn-text">Pausar</span>
-            </button>
-            <button class="btn" id="resetBtn">
-                <i class="fas fa-redo"></i>
-                Reiniciar
-            </button>
-            <button class="btn btn-primary" id="simulateBtn">
-                <i class="fas fa-play"></i>
-                Simular CV
-            </button>
-            
-            <div class="toggle-container">
-                <span class="toggle-text">Modo Oscuro</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="darkModeToggle">
-                    <span class="toggle-slider"></span>
-                </label>
+            <div class="help-content">
+                <p>¡Bienvenido al ATS Rankmi! Aquí te explicamos cómo funciona cada botón:</p>
+                
+                <div class="help-item">
+                    <strong><i class="fas fa-rotate-left"></i> Reiniciar</strong>
+                    Vuelve al inicio del flujo de reclutamiento y limpia todas las anotaciones.
+                </div>
+                
+                <div class="help-item">
+                    <strong><i class="fas fa-pen"></i> Dibujar</strong>
+                    Activa el modo dibujo para hacer anotaciones sobre la pantalla. Haz clic y arrastra para dibujar.
+                </div>
+                
+                <div class="help-item">
+                    <strong><i class="fas fa-font"></i> Notas</strong>
+                    Activa el modo texto para agregar notas. Haz clic en cualquier lugar para crear una nota de texto.
+                </div>
+                
+                <div class="help-item">
+                    <strong><i class="fas fa-play"></i> Play/Pausa</strong>
+                    Inicia o pausa la simulación automática del proceso de reclutamiento.
+                </div>
+                
+                <div class="help-item">
+                    <strong><i class="fas fa-language"></i> Idioma</strong>
+                    Cambia entre Español, Inglés y Portugués. Afecta a todos los textos de la aplicación.
+                </div>
+                
+                <div class="help-item">
+                    <strong><i class="fas fa-palette"></i> Tema</strong>
+                    Cambia el tema visual entre las cuatro estaciones del año.
+                </div>
+                
+                <div class="help-tip">
+                    <strong>💡 Tip:</strong> Pasa el mouse sobre los botones "i" en cada etapa para ver información técnica detallada.
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Header del Donante Modificado -->
+    <header>
+        <!-- Identidad / Breadcrumb Style -->
+        <div class="header-identity">
+            <div class="brand-marker"></div>
+            <div class="brand-text">
+                <div class="title">ATS Rankmi</div>
+                <div class="subtitle">Flujo de Reclutamiento Inteligente</div>
+            </div>
+        </div>
+        
+        <!-- Herramientas derecha -->
+        <div class="header-tools">
+            <!-- Grupo de herramientas operativas -->
+            <div class="tool-group">
+                <!-- Botón de ayuda interactiva -->
+                <button class="btn-tool" id="btn-help" title="Ayuda Interactiva">
+                    <i class="fas fa-circle-question"></i>
+                </button>
+                
+                <button class="btn-tool" id="btn-reset" title="Reiniciar">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+                
+                <button class="btn-tool" id="btn-mode-draw" title="Dibujar">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                
+                <button class="btn-tool" id="btn-mode-text" title="Notas">
+                    <i class="fa-solid fa-font"></i>
+                </button>
+                
+                <button class="btn-tool" id="btn-play" title="Play/Pausa">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+            
+            <!-- Grupo de configuración global -->
+            <div class="config-group">
+                <button class="btn-config" id="btn-lang" title="Idioma">
+                    <span id="langText">🇪🇸 ES</span>
+                </button>
+                
+                <button class="btn-config" id="btn-theme" title="Tema">
+                    <span id="themeIcon">☀️ Verano</span>
+                </button>
+                
+                <div class="clock-display" id="clockDisplay">--:--</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido del ATS -->
     <div class="main-flow">
         <div class="flow-header">
             <div class="flow-title">
@@ -1114,7 +1520,8 @@
         </div>
         
         <div class="modules-track" id="modulesTrack">
-            </div>
+            <!-- Los módulos se generarán dinámicamente -->
+        </div>
     </div>
 
     <div class="main-panel">
@@ -1164,7 +1571,8 @@
             </div>
             
             <div class="modules-chips" id="modulesContainer">
-                </div>
+                <!-- Los módulos en chips se generarán dinámicamente -->
+            </div>
             
             <div class="section-title">
                 <i class="fas fa-folder"></i>
@@ -1172,7 +1580,8 @@
             </div>
             
             <div class="documents-mini" id="documentsContainer">
-                </div>
+                <!-- Los documentos se generarán dinámicamente -->
+            </div>
         </div>
     </div>
 
@@ -1180,6 +1589,7 @@
         <p>Flujo automatizado de reclutamiento • Integración con Genius AI • Rankmi Full Suite</p>
     </div>
 
+    <!-- Popup técnico del ATS -->
     <div id="techPopup">
         <div class="tech-header">
             <div class="tech-title">
@@ -1193,8 +1603,12 @@
         </div>
     </div>
 
+    <!-- Capas para dibujo y texto -->
+    <canvas id="layer-draw"></canvas>
+    <div id="layer-text"></div>
+
     <script>
-        // ===== CONFIGURACIÓN =====
+        // ===== CONFIGURACIÓN DEL ATS =====
         const stages = {
             1: {
                 name: "Solicitud",
@@ -1340,12 +1754,60 @@
             7: "Magia de cierre. Se crea el acceso a la plataforma y la <b>Ficha Maestra</b> del colaborador con datos de renta y cargo ya precargados."
         };
 
-        // ===== ELEMENTOS DOM =====
+        // ===== DATOS TÉCNICOS DE MÓDULOS =====
+        const MODULE_TECH_DATA = {
+            "workflows": [
+                { ent: "Solicitudes", db: "requests", key: "token", req: "type, status, requester_token", all: "token, type, status, requester_token, approver_token, created_at, updated_at", mean: "Tabla principal de solicitudes del sistema." }
+            ],
+            "jerarquia": [
+                { ent: "Áreas", db: "areas", key: "token", req: "name, code, parent_area_id", all: "token, name, code, parent_area_id, depth, children_count", mean: "Estructura organizacional jerárquica." }
+            ],
+            "centro-costos": [
+                { ent: "Centros Costo", db: "cost_centers", key: "code", req: "code, name, budget", all: "code, name, budget, manager_token, active", mean: "Centros de costo para imputación presupuestaria." }
+            ],
+            "posiciones": [
+                { ent: "Cargos", db: "positions", key: "token", req: "name, code, level", all: "token, name, code, level, requirements, skills", mean: "Catálogo de posiciones y cargos." }
+            ],
+            "genius-ai": [
+                { ent: "Análisis CV", db: "cv_analysis", key: "id", req: "cv_id, score, match_percentage", all: "id, cv_id, score, match_percentage, skills_found, created_at", mean: "Resultados del análisis de IA sobre CVs." }
+            ],
+            "ats": [
+                { ent: "Candidatos", db: "candidates", key: "id", req: "name, email, status", all: "id, name, email, phone, status, cv_url, applied_at", mean: "Base de datos de candidatos del ATS." }
+            ],
+            "shl": [
+                { ent: "Tests", db: "shl_tests", key: "test_id", req: "candidate_id, test_type, score", all: "test_id, candidate_id, test_type, score, completed_at, report_url", mean: "Resultados de pruebas psicométricas SHL." }
+            ],
+            "verificacion": [
+                { ent: "Antecedentes", db: "background_checks", key: "check_id", req: "candidate_id, status, result", all: "check_id, candidate_id, status, result, completed_at, verified_by", mean: "Verificación de antecedentes personales." }
+            ]
+        };
+
+        // ===== ELEMENTOS DOM Y ESTADO =====
         let currentStage = 1;
         const totalStages = 7;
         let animationInterval = null;
+        let currentTool = null;
+        let isDrawing = false;
+        let currentLang = 'es';
+        let currentSeason = 'summer';
+        let isDraggingNote = null;
+        let dragOffset = { x: 0, y: 0 };
 
-        // ===== FUNCIONES PRINCIPALES =====
+        // ===== CONFIGURACIONES DEL HEADER =====
+        const languageMap = {
+            'es': { flag: '🇪🇸', code: 'ES', name: 'Español' },
+            'en': { flag: '🇺🇸', code: 'EN', name: 'English' },
+            'pt': { flag: '🇧🇷', code: 'PT', name: 'Português' }
+        };
+
+        const seasonMap = {
+            'summer': { icon: '☀️', name: 'Verano' },
+            'autumn': { icon: '🍂', name: 'Otoño' },
+            'winter': { icon: '❄️', name: 'Invierno' },
+            'spring': { icon: '🌸', name: 'Primavera' }
+        };
+
+        // ===== FUNCIONES PRINCIPALES DEL ATS =====
         function setStage(stageNumber) {
             currentStage = stageNumber;
             const stageData = stages[stageNumber];
@@ -1447,10 +1909,12 @@
                 const chip = document.createElement('div');
                 chip.className = 'module-chip';
                 chip.title = module.desc;
+                
                 chip.innerHTML = `
                     <i class="${module.icon}"></i>
                     <span>${module.name}</span>
                 `;
+                
                 modulesContainer.appendChild(chip);
             });
         }
@@ -1473,7 +1937,13 @@
             });
         }
 
+        // ===== FUNCIONES DE SIMULACIÓN =====
         function simulateCVUpload() {
+            // Cambiar icono del botón de play a pausa
+            const playBtn = document.getElementById('btn-play');
+            playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            playBtn.title = 'Pausar';
+            
             // Ocultar área de upload
             const uploadArea = document.getElementById('uploadArea');
             uploadArea.style.display = 'none';
@@ -1523,6 +1993,11 @@
         function resetFlow() {
             stopAutoAdvance();
             
+            // Restaurar botón de play
+            const playBtn = document.getElementById('btn-play');
+            playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            playBtn.title = 'Play';
+            
             // Mostrar área de upload
             const uploadArea = document.getElementById('uploadArea');
             uploadArea.style.display = 'flex';
@@ -1534,68 +2009,163 @@
             // Regresar a etapa 1
             setStage(1);
             
-            // Resetear estado de pausa
-            isPaused = false;
-            elapsedPausedTime = 0;
-            pauseStartTime = null;
-            pauseBtn.innerHTML = '<i class="fas fa-pause"></i><span class="btn-text"> Pausar</span>';
-            pauseBtn.classList.remove('btn-warning');
+            // Limpiar canvas de dibujo
+            const ctxDraw = document.getElementById('layer-draw').getContext('2d');
+            ctxDraw.clearRect(0, 0, 
+                document.getElementById('layer-draw').width, 
+                document.getElementById('layer-draw').height
+            );
+            
+            // Limpiar notas de texto
+            document.getElementById('layer-text').innerHTML = '';
+            
             updateTimeIndicators(1);
         }
 
-        // ===== FUNCIONALIDADES ADICIONALES =====
-
-        // 1. BOTÓN DE PAUSAR/REANUDAR
-        const pauseBtn = document.getElementById('pauseBtn');
-        let isPaused = false;
-        let pauseStartTime = null;
-        let elapsedPausedTime = 0;
-
-        pauseBtn.addEventListener('click', function() {
-            if (!isPaused) {
-                // Pausar
-                stopAutoAdvance();
-                pauseBtn.innerHTML = '<i class="fas fa-play"></i><span class="btn-text"> Reanudar</span>';
-                pauseBtn.classList.add('btn-warning');
-                pauseStartTime = Date.now();
-                isPaused = true;
-                
-                showNotification('Simulación pausada', 'info');
-            } else {
-                // Reanudar
-                if (pauseStartTime) {
-                    elapsedPausedTime += Date.now() - pauseStartTime;
-                }
-                startAutoAdvance();
-                pauseBtn.innerHTML = '<i class="fas fa-pause"></i><span class="btn-text"> Pausar</span>';
-                pauseBtn.classList.remove('btn-warning');
-                isPaused = false;
-                
-                showNotification('Simulación reanudada', 'success');
-            }
-        });
-
-        // 2. MODO OSCURO
-        const darkModeToggle = document.getElementById('darkModeToggle');
-
-        if (localStorage.getItem('darkMode') === 'enabled') {
-            document.body.classList.add('dark-mode');
-            darkModeToggle.checked = true;
+        // ===== FUNCIONALIDADES DEL HEADER =====
+        function updateLanguageDisplay() {
+            const langData = languageMap[currentLang];
+            document.getElementById('langText').innerHTML = `${langData.flag} ${langData.code}`;
+            document.getElementById('btn-lang').title = `Idioma (${langData.name})`;
         }
 
-        darkModeToggle.addEventListener('change', function() {
-            if (this.checked) {
-                document.body.classList.add('dark-mode');
-                localStorage.setItem('darkMode', 'enabled');
-                showNotification('Modo oscuro activado', 'info');
-            } else {
-                document.body.classList.remove('dark-mode');
-                localStorage.setItem('darkMode', 'disabled');
-                showNotification('Modo claro activado', 'info');
-            }
-        });
+        function updateSeasonDisplay() {
+            const seasonData = seasonMap[currentSeason];
+            document.getElementById('themeIcon').innerHTML = `${seasonData.icon} ${seasonData.name}`;
+            document.getElementById('btn-theme').title = `Tema (${seasonData.name})`;
+        }
 
-        // 3. TIEMPOS ESTIMADOS
+        function changeTheme() {
+            const body = document.body;
+            
+            // Remover todos los temas anteriores
+            body.classList.remove('mode-autumn', 'mode-winter', 'mode-spring', 'dark-mode');
+            
+            // Aplicar nuevo tema
+            if (currentSeason !== 'summer') {
+                body.classList.add(`mode-${currentSeason}`);
+            }
+            
+            // Actualizar variables CSS según el tema
+            updateCSSVariables();
+        }
+
+        function updateCSSVariables() {
+            const root = document.documentElement;
+            
+            if (currentSeason === 'autumn') {
+                root.style.setProperty('--primary', '#ea580c');
+                root.style.setProperty('--primary-light', '#f97316');
+                root.style.setProperty('--primary-bg', '#ffedd5');
+                root.style.setProperty('--success', '#16a34a');
+                root.style.setProperty('--info', '#0ea5e9');
+            } else if (currentSeason === 'winter') {
+                root.style.setProperty('--primary', '#60a5fa');
+                root.style.setProperty('--primary-light', '#3b82f6');
+                root.style.setProperty('--primary-bg', '#1e293b');
+                root.style.setProperty('--success', '#34d399');
+                root.style.setProperty('--info', '#38bdf8');
+            } else if (currentSeason === 'spring') {
+                root.style.setProperty('--primary', '#16a34a');
+                root.style.setProperty('--primary-light', '#22c55e');
+                root.style.setProperty('--primary-bg', '#dcfce7');
+                root.style.setProperty('--success', '#22c55e');
+                root.style.setProperty('--info', '#0d9488');
+            } else {
+                // Verano (default)
+                root.style.setProperty('--primary', '#DC2626');
+                root.style.setProperty('--primary-light', '#F87171');
+                root.style.setProperty('--primary-bg', '#FEF2F2');
+                root.style.setProperty('--success', '#10B981');
+                root.style.setProperty('--info', '#3B82F6');
+            }
+        }
+
+        function activateTool(tool) {
+            const btnDraw = document.getElementById('btn-mode-draw');
+            const btnText = document.getElementById('btn-mode-text');
+            
+            if (currentTool === tool) { 
+                currentTool = null;
+                document.body.classList.remove('mode-draw', 'mode-text');
+                btnDraw.classList.remove('active'); 
+                btnText.classList.remove('active'); 
+                
+                // Asegurar que el layer-draw no interfiera con los clics
+                document.getElementById('layer-draw').style.pointerEvents = 'none';
+            } else { 
+                currentTool = tool;
+                document.body.classList.remove('mode-draw', 'mode-text');
+                btnDraw.classList.remove('active'); 
+                btnText.classList.remove('active');
+                document.body.classList.add(tool === 'draw' ? 'mode-draw' : 'mode-text');
+                (tool === 'draw' ? btnDraw : btnText).classList.add('active');
+                
+                // Activar pointer-events solo para dibujo
+                if (tool === 'draw') {
+                    document.getElementById('layer-draw').style.pointerEvents = 'auto';
+                }
+            }
+        }
+
+        // ===== AYUDA INTERACTIVA =====
+        function showHelp() {
+            document.getElementById('helpOverlay').style.display = 'flex';
+        }
+
+        function hideHelp() {
+            document.getElementById('helpOverlay').style.display = 'none';
+        }
+
+        // ===== POPUP TÉCNICO =====
+        function showTechPopup(target, stageNumber) {
+            clearTimeout(window.popupTimer);
+            
+            const stageName = stages[stageNumber].name;
+            const description = stageDescriptions[stageNumber];
+            document.getElementById('techTitle').textContent = `Etapa ${stageNumber} - ${stageName}`;
+            document.getElementById('techBody').innerHTML = description;
+            
+            positionTechPopup(target);
+            
+            document.getElementById('techPopup').classList.add('visible');
+            
+            // Pausar flujo automático mientras se lee
+            stopAutoAdvance();
+        }
+
+        function hideTechPopup() {
+            window.popupTimer = setTimeout(() => {
+                document.getElementById('techPopup').classList.remove('visible');
+            }, 10);
+        }
+        
+        function positionTechPopup(target) {
+            const rect = target.getBoundingClientRect();
+            const popup = document.getElementById('techPopup');
+            const popupRect = popup.getBoundingClientRect();
+            const margin = 12;
+            
+            let top = rect.top - popupRect.height - margin;
+            let left = rect.left + (rect.width / 2) - (popupRect.width / 2);
+            
+            // Ajuste Vertical: Si no cabe arriba, mostrar abajo
+            if (top < 10) {
+                top = rect.bottom + margin;
+            }
+            
+            // Ajuste Horizontal: Si se sale por la izquierda
+            if (left < 10) {
+                left = 10;
+            } else if (left + popupRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - popupRect.width - 10;
+            }
+            
+            popup.style.top = `${top}px`;
+            popup.style.left = `${left}px`;
+        }
+
+        // ===== FUNCIONES AUXILIARES =====
         const stageTimes = {
             1: { min: 2, max: 3, unit: 'días' },
             2: { min: 1, max: 2, unit: 'días' },
@@ -1620,7 +2190,6 @@
                     }
                     
                     if (i === currentStage) {
-                        const avgTime = (time.min + time.max) / 2;
                         timeElement.innerHTML = `<i class="fas fa-clock"></i> ${timeText}`;
                         timeElement.style.fontWeight = '700';
                     } else if (i < currentStage) {
@@ -1636,113 +2205,91 @@
             }
         }
 
-        // 4. NOTIFICACIONES TEMPORALES
-        function showNotification(message, type = 'info') {
-            const existingNotif = document.querySelector('.notification');
-            if (existingNotif) existingNotif.remove();
+        // ===== FUNCIONALIDAD DE NOTAS DE TEXTO =====
+        function setupTextNotes() {
+            const divText = document.getElementById('layer-text');
             
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
-                <span>${message}</span>
-            `;
-            
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'success' ? '#10B981' : '#3B82F6'};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 0.85rem;
-                font-weight: 600;
-                z-index: 1000;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                animation: slideIn 0.3s ease;
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+            divText.addEventListener('click', (e) => {
+                if (currentTool !== 'text' || e.target.classList.contains('note-item') || e.target.classList.contains('note-input')) return;
+                
+                const input = document.createElement('input');
+                input.className = 'note-input';
+                input.style.left = e.clientX + 'px';
+                input.style.top = e.clientY + 'px';
+                input.placeholder = 'Escribe tu nota aquí...';
+                divText.appendChild(input);
+                input.focus();
+                
+                const saveNote = () => {
+                    if (input.value.trim()) {
+                        const note = document.createElement('div');
+                        note.className = 'note-item';
+                        note.innerText = input.value;
+                        note.style.left = input.style.left;
+                        note.style.top = input.style.top;
+                        
+                        // Hacer la nota arrastrable
+                        note.addEventListener('mousedown', startDragNote);
+                        
+                        // Eliminar con doble clic
+                        note.addEventListener('dblclick', function() { 
+                            this.remove(); 
+                        });
+                        
+                        divText.appendChild(note);
+                    }
+                    input.remove();
+                };
+                
+                input.addEventListener('keydown', (k) => {
+                    if (k.key === 'Enter') saveNote();
+                    if (k.key === 'Escape') input.remove();
+                });
+                input.addEventListener('blur', saveNote);
+            });
         }
 
-        // ========================================================
-        // 5. NUEVO SISTEMA DE POPUP TÉCNICO MEJORADO (JavaScript)
-        // ========================================================
-        
-        const techPopup = document.getElementById('techPopup');
-        const techTitle = document.getElementById('techTitle');
-        const techBody = document.getElementById('techBody');
-        let popupTimer; // Para el delay al cerrar
-
-        function showTechPopup(target, stageNumber) {
-            // Limpiar timer de cierre si existe (el usuario volvió al elemento)
-            clearTimeout(popupTimer);
-
-            // 1. Llenar datos
-            const stageName = stages[stageNumber].name;
-            const description = stageDescriptions[stageNumber];
-            techTitle.textContent = `Etapa ${stageNumber} - ${stageName}`;
-            techBody.innerHTML = description;
-
-            // 2. Calcular Posición Inteligente
-            positionTechPopup(target);
-
-            // 3. Mostrar con animación suave
-            techPopup.classList.add('visible');
+        function startDragNote(e) {
+            if (currentTool !== 'text') return;
             
-            // Pausar flujo automático mientras se lee
-            stopAutoAdvance();
+            isDraggingNote = e.target;
+            dragOffset.x = e.clientX - isDraggingNote.offsetLeft;
+            dragOffset.y = e.clientY - isDraggingNote.offsetTop;
+            
+            document.addEventListener('mousemove', dragNote);
+            document.addEventListener('mouseup', stopDragNote);
+            
+            e.preventDefault();
         }
 
-        function hideTechPopup() {
-            // Añadir pequeño delay (10ms) para permitir mover el mouse del icono al popup
-            popupTimer = setTimeout(() => {
-                techPopup.classList.remove('visible');
-            }, 10);
-        }
-        
-        function positionTechPopup(target) {
-            const rect = target.getBoundingClientRect();
-            const popupRect = techPopup.getBoundingClientRect();
-            const margin = 12; // Espacio entre icono y popup
-
-            // Posición por defecto: Centro horizontal respecto al icono, Arriba del icono
-            let top = rect.top - popupRect.height - margin;
-            let left = rect.left + (rect.width / 2) - (popupRect.width / 2);
-
-            // A. Ajuste Vertical: Si no cabe arriba, mostrar abajo
-            if (top < 10) {
-                top = rect.bottom + margin;
-                // Pequeño estilo visual para indicar que sale de abajo si quisieras flechas
-            }
-
-            // B. Ajuste Horizontal: Si se sale por la izquierda
-            if (left < 10) {
-                left = 10;
-            } 
-            // Si se sale por la derecha
-            else if (left + popupRect.width > window.innerWidth - 10) {
-                left = window.innerWidth - popupRect.width - 10;
-            }
-
-            techPopup.style.top = `${top}px`;
-            techPopup.style.left = `${left}px`;
+        function dragNote(e) {
+            if (!isDraggingNote) return;
+            
+            isDraggingNote.style.left = (e.clientX - dragOffset.x) + 'px';
+            isDraggingNote.style.top = (e.clientY - dragOffset.y) + 'px';
         }
 
-        // EVENT LISTENERS MEJORADOS PARA EL POPUP
+        function stopDragNote() {
+            isDraggingNote = null;
+            document.removeEventListener('mousemove', dragNote);
+            document.removeEventListener('mouseup', stopDragNote);
+        }
+
+        // ===== INICIALIZACIÓN =====
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('ATS Rankmi - Inicializando...');
+            
+            // Inicializar ATS
             setStage(1);
             
-            // Click en línea de tiempo
+            // Inicializar displays de idioma y estación
+            updateLanguageDisplay();
+            updateSeasonDisplay();
+            
+            // Configurar funcionalidad de notas de texto
+            setupTextNotes();
+            
+            // Event listeners del ATS
             const steps = document.querySelectorAll('.flow-step');
             steps.forEach(step => {
                 step.addEventListener('click', () => {
@@ -1752,70 +2299,141 @@
                 });
             });
             
-            // Botones de control
             document.getElementById('uploadArea').addEventListener('click', simulateCVUpload);
-            document.getElementById('simulateBtn').addEventListener('click', simulateCVUpload);
-            document.getElementById('resetBtn').addEventListener('click', resetFlow);
             
-            // LISTENERS DEL ICONO DE INFORMACIÓN (HOVER)
+            // Botones de información (popup de etapas)
             const infoButtons = document.querySelectorAll('.step-info-btn');
-            
             infoButtons.forEach(button => {
-                // Entrada del mouse: Mostrar
                 button.addEventListener('mouseenter', (e) => {
                     const stageNumber = parseInt(button.dataset.stage);
                     showTechPopup(button, stageNumber);
                 });
                 
-                // Salida del mouse: Intentar cerrar (con delay)
                 button.addEventListener('mouseleave', () => {
                     hideTechPopup();
                 });
             });
-
-            // LOGICA DE IMÁN: Si el usuario mueve el mouse SOBRE el popup, no cerrarlo
-            techPopup.addEventListener('mouseenter', () => {
-                clearTimeout(popupTimer); // Cancelar cierre
+            
+            // Event listeners del header
+            document.getElementById('btn-help').addEventListener('click', showHelp);
+            document.getElementById('helpClose').addEventListener('click', hideHelp);
+            document.getElementById('helpOverlay').addEventListener('click', function(e) {
+                if (e.target === this) hideHelp();
             });
-
-            // Si saca el mouse del popup, cerrar
-            techPopup.addEventListener('mouseleave', () => {
-                hideTechPopup();
-            });
-
-            // CERRAR CON ESC
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    techPopup.classList.remove('visible');
+            
+            document.getElementById('btn-play').addEventListener('click', function() {
+                if (animationInterval) {
+                    // Está corriendo, pausar
+                    stopAutoAdvance();
+                    this.innerHTML = '<i class="fa-solid fa-play"></i>';
+                    this.title = 'Play';
+                } else {
+                    // No está corriendo, iniciar
+                    simulateCVUpload();
                 }
             });
             
-            // CERRAR CLICK FUERA (Opcional, ya que hover lo maneja, pero bueno para UX móvil)
-            document.addEventListener('click', (e) => {
-                if (!techPopup.contains(e.target) && !e.target.classList.contains('step-info-btn')) {
-                     techPopup.classList.remove('visible');
+            document.getElementById('btn-reset').addEventListener('click', resetFlow);
+            
+            document.getElementById('btn-mode-draw').addEventListener('click', () => activateTool('draw'));
+            document.getElementById('btn-mode-text').addEventListener('click', () => activateTool('text'));
+            
+            document.getElementById('btn-lang').addEventListener('click', () => {
+                const langs = ['es', 'en', 'pt'];
+                let idx = langs.indexOf(currentLang);
+                currentLang = langs[(idx + 1) % langs.length];
+                updateLanguageDisplay();
+                console.log('Idioma cambiado a:', currentLang);
+            });
+            
+            document.getElementById('btn-theme').addEventListener('click', () => {
+                const seasons = ['summer', 'autumn', 'winter', 'spring'];
+                let idx = seasons.indexOf(currentSeason);
+                idx = (idx + 1) % seasons.length;
+                currentSeason = seasons[idx];
+                changeTheme();
+                updateSeasonDisplay();
+                console.log('Tema cambiado a:', currentSeason);
+            });
+            
+            // Configurar canvas de dibujo
+            const canvasDraw = document.getElementById('layer-draw');
+            const ctxDraw = canvasDraw.getContext('2d');
+            canvasDraw.width = window.innerWidth;
+            canvasDraw.height = window.innerHeight;
+            ctxDraw.lineWidth = 3;
+            ctxDraw.lineCap = 'round';
+            ctxDraw.strokeStyle = '#ef4444';
+            
+            canvasDraw.addEventListener('mousedown', (e) => {
+                if (currentTool === 'draw') {
+                    isDrawing = true;
+                    ctxDraw.beginPath();
+                    ctxDraw.moveTo(e.clientX, e.clientY);
                 }
             });
+            
+            canvasDraw.addEventListener('mousemove', (e) => {
+                if (isDrawing && currentTool === 'draw') {
+                    ctxDraw.lineTo(e.clientX, e.clientY);
+                    ctxDraw.stroke();
+                }
+            });
+            
+            canvasDraw.addEventListener('mouseup', () => isDrawing = false);
+            
+            // Configurar reloj
+            setInterval(() => {
+                const now = new Date();
+                const loc = currentLang === 'es' ? 'es-CL' : (currentLang === 'en' ? 'en-US' : 'pt-BR');
+                document.getElementById('clockDisplay').innerText = 
+                    `${now.toLocaleDateString(loc, {day:'2-digit', month:'short'})} | ${now.toLocaleTimeString(loc, {hour:'2-digit', minute:'2-digit'})}`;
+            }, 1000);
+            
+            // Configurar animación de fondo
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = Array.from({length: 30}, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - .5) * 0.5,
+                vy: (Math.random() - .5) * 0.5,
+                size: Math.random() * 1.5 + 0.5
+            }));
+            
+            function anim() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = document.body.classList.contains('mode-winter') ? 
+                        'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.1)';
+                    ctx.fill();
+                });
+                requestAnimationFrame(anim);
+            }
+            anim();
+            
+            console.log('ATS Rankmi - Inicialización completa');
+        });
 
-            // Drag and drop events
-            const uploadArea = document.getElementById('uploadArea');
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--primary)';
-                uploadArea.style.background = 'var(--primary-bg)';
-            });
+        // Redibujar canvas en resize
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('bg-canvas');
+            const canvasDraw = document.getElementById('layer-draw');
             
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.style.borderColor = 'var(--gray-light)';
-                uploadArea.style.background = 'transparent';
-            });
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--gray-light)';
-                uploadArea.style.background = 'transparent';
-                simulateCVUpload();
-            });
+            canvasDraw.width = window.innerWidth;
+            canvasDraw.height = window.innerHeight;
         });
     </script>
 </body>
