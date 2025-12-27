@@ -115,6 +115,81 @@
             letter-spacing: 0.5px;
         }
 
+        /* ===== BOTÓN FULL SUITE ===== */
+        .fullsuite-btn-container {
+            margin-left: auto;
+            margin-right: 8px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-fullsuite {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            height: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+            white-space: nowrap;
+        }
+
+        .btn-fullsuite:hover {
+            background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-fullsuite:active {
+            transform: translateY(0);
+        }
+
+        .btn-fullsuite i {
+            font-size: 0.7rem;
+        }
+
+        /* Modo oscuro */
+        body.dark-mode .btn-fullsuite {
+            background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        body.dark-mode .btn-fullsuite:hover {
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .btn-fullsuite span {
+                display: none;
+            }
+            
+            .btn-fullsuite {
+                width: 32px;
+                height: 32px;
+                padding: 0;
+                justify-content: center;
+            }
+            
+            .btn-fullsuite i {
+                font-size: 0.8rem;
+                margin: 0;
+            }
+            
+            .fullsuite-btn-container {
+                margin-right: 4px;
+            }
+        }
+
         /* OPTIMIZACIÓN DE ESPACIOS - HEADER TOOLS */
         .header-tools {
             display: flex;
@@ -122,7 +197,6 @@
             gap: 4px;
             min-width: max-content;
             flex-shrink: 0;
-            margin-left: auto;
         }
 
         .tool-group {
@@ -1401,6 +1475,14 @@
                 <div class="title">ATS Rankmi</div>
                 <div class="subtitle">Flujo de Reclutamiento Inteligente</div>
             </div>
+        </div>
+        
+        <!-- NUEVO: Botón Full Suite -->
+        <div class="fullsuite-btn-container">
+            <a href="https://proyect-full-suite.pages.dev/" target="_blank" class="btn-fullsuite" title="Ir a Full Suite">
+                <i class="fas fa-external-link-alt"></i>
+                <span>Full Suite</span>
+            </a>
         </div>
         
         <!-- Herramientas derecha -->
